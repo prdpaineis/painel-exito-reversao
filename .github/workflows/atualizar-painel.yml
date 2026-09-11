@@ -25,15 +25,15 @@ jobs:
           ODOO_LOGIN: ${{ secrets.ODOO_LOGIN }}
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
         run: |
+          set +e
           python atualizar.py
           code=$?
-          # código 3 = divergência leve (totais diferem por 1-2 registros em trânsito)
-          # o painel é gerado normalmente; apenas logamos o aviso
+          set -e
           if [ $code -eq 3 ]; then
             echo "AVISO: pequena divergência nos totais (dados em trânsito no Odoo). Painel gerado."
-            exit 0
+          elif [ $code -ne 0 ]; then
+            exit $code
           fi
-          exit $code
 
       - name: Commitar painel atualizado
         run: |

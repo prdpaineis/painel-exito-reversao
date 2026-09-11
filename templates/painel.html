@@ -1,0 +1,1349 @@
+
+<title>Êxito e Reversão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#f3f5f8; --surface:#ffffff; --surface-2:#f7f9fb;
+  --ink:#111827; --ink-2:#4b5563; --ink-3:#8791a3;
+  --line:#e3e7ee; --line-2:#cfd6e0;
+  --accent:#1c5cab; --accent-ink:#ffffff;
+  --exito:#1c5cab; --exito-soft:#dbe7f7; --proc:#e34948; --parc:#eda100; --ghost:#9aa6b8;
+  --heat0-bg:transparent; --heat0-ink:var(--ink-2);
+  --heat1-bg:#e4eefb; --heat1-ink:#111827;
+  --heat2-bg:#c5daf6; --heat2-ink:#111827;
+  --heat3-bg:#9ec5f4; --heat3-ink:#111827;
+  --heat4-bg:#6da7ec; --heat4-ink:#0b1b33;
+  --heat5-bg:#3987e5; --heat5-ink:#ffffff;
+  --heat6-bg:#1c5cab; --heat6-ink:#ffffff;
+  --heat7-bg:#0d366b; --heat7-ink:#ffffff;
+  --heatr1-bg:#fbe7e7; --heatr1-ink:#111827;
+  --heatr2-bg:#f6c9c9; --heatr2-ink:#111827;
+  --heatr3-bg:#f0a5a5; --heatr3-ink:#111827;
+  --heatr4-bg:#e87d7d; --heatr4-ink:#2a0a0a;
+  --heatr5-bg:#e34948; --heatr5-ink:#ffffff;
+  --heatr6-bg:#b63535; --heatr6-ink:#ffffff;
+  --heatr7-bg:#7f2222; --heatr7-ink:#ffffff;
+  --tip-bg:#111827; --tip-ink:#f9fafb;
+  --focus:#1c5cab;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0f1419; --surface:#171d26; --surface-2:#1d242f;
+    --ink:#f2f4f7; --ink-2:#b8c0cc; --ink-3:#8791a3;
+    --line:#273040; --line-2:#344055;
+    --accent:#3987e5; --accent-ink:#0b1b33;
+    --exito:#3987e5; --exito-soft:#1b2d47; --proc:#d55181; --parc:#c98500; --ghost:#6b7688;
+    --heat1-bg:#152238; --heat1-ink:#f2f4f7;
+    --heat2-bg:#183056; --heat2-ink:#f2f4f7;
+    --heat3-bg:#1c4478; --heat3-ink:#f2f4f7;
+    --heat4-bg:#256abf; --heat4-ink:#ffffff;
+    --heat5-bg:#3987e5; --heat5-ink:#ffffff;
+    --heat6-bg:#6da7ec; --heat6-ink:#0b1b33;
+    --heat7-bg:#9ec5f4; --heat7-ink:#0b1b33;
+  --heatr1-bg:#2e181c; --heatr1-ink:#f2f4f7;
+  --heatr2-bg:#451f27; --heatr2-ink:#f2f4f7;
+  --heatr3-bg:#652a38; --heatr3-ink:#f2f4f7;
+  --heatr4-bg:#9a3a56; --heatr4-ink:#ffffff;
+  --heatr5-bg:#d55181; --heatr5-ink:#ffffff;
+  --heatr6-bg:#e88cab; --heatr6-ink:#2a0a14;
+  --heatr7-bg:#f4b9cd; --heatr7-ink:#2a0a14;
+    --heatr1-bg:#2e181c; --heatr1-ink:#f2f4f7;
+    --heatr2-bg:#451f27; --heatr2-ink:#f2f4f7;
+    --heatr3-bg:#652a38; --heatr3-ink:#f2f4f7;
+    --heatr4-bg:#9a3a56; --heatr4-ink:#ffffff;
+    --heatr5-bg:#d55181; --heatr5-ink:#ffffff;
+    --heatr6-bg:#e88cab; --heatr6-ink:#2a0a14;
+    --heatr7-bg:#f4b9cd; --heatr7-ink:#2a0a14;
+    --tip-bg:#f2f4f7; --tip-ink:#111827;
+    --focus:#6da7ec;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0f1419; --surface:#171d26; --surface-2:#1d242f;
+  --ink:#f2f4f7; --ink-2:#b8c0cc; --ink-3:#8791a3;
+  --line:#273040; --line-2:#344055;
+  --accent:#3987e5; --accent-ink:#0b1b33;
+  --exito:#3987e5; --exito-soft:#1b2d47; --proc:#d55181; --parc:#c98500; --ghost:#6b7688;
+  --heat1-bg:#152238; --heat1-ink:#f2f4f7;
+  --heat2-bg:#183056; --heat2-ink:#f2f4f7;
+  --heat3-bg:#1c4478; --heat3-ink:#f2f4f7;
+  --heat4-bg:#256abf; --heat4-ink:#ffffff;
+  --heat5-bg:#3987e5; --heat5-ink:#ffffff;
+  --heat6-bg:#6da7ec; --heat6-ink:#0b1b33;
+  --heat7-bg:#9ec5f4; --heat7-ink:#0b1b33;
+  --tip-bg:#f2f4f7; --tip-ink:#111827;
+  --focus:#6da7ec;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:20px}
+h1{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:500;font-size:34px;line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--ink-2);margin:6px 0 0;max-width:62ch}
+.meta{color:var(--ink-3);font-size:12px;text-align:right}
+.meta b{color:var(--ink-2);font-weight:600}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:0 0 18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px;font:inherit;font-weight:600;font-size:13px;cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip:focus-visible,.toggle:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.spacer{flex:1}
+.toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:6px 12px 6px 8px;font:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.toggle .sw{width:28px;height:16px;border-radius:999px;background:var(--line-2);position:relative;transition:background .15s}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--surface);transition:transform .15s}
+.toggle[aria-pressed="true"] .sw{background:var(--accent)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(12px)}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.kpi .l{font-size:12px;color:var(--ink-3);font-weight:600}
+.kpi .v{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:4px;line-height:1.1}
+.kpi .d{font-size:12px;color:var(--ink-2);margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi.hero{border-color:var(--exito);background:linear-gradient(0deg,var(--exito-soft),var(--surface) 70%)}
+.kpi.hero .v{color:var(--exito)}
+.delta-up{color:#0a7a2f}.delta-down{color:var(--proc)}
+:root[data-theme="dark"] .delta-up{color:#3ec26b}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .delta-up{color:#3ec26b}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px 10px;min-width:0}
+.card h2{font-size:14px;font-weight:700;margin:0;letter-spacing:-.005em}
+.card .h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card .note{font-size:12px;color:var(--ink-3)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px}
+.legend i.line{height:0;width:16px;border-top:2px solid var(--exito);border-radius:0}
+.legend i.dash{height:0;width:16px;border-top:2px dashed var(--ghost);border-radius:0}
+.chart{position:relative;width:100%}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart text{font-family:inherit;font-size:11px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.chart .grid line{stroke:var(--line);stroke-width:1}
+.chart .axis line{stroke:var(--line-2);stroke-width:1}
+.chart .lbl{fill:var(--ink);font-weight:700;font-size:11px}
+.tip{position:absolute;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.35;box-shadow:0 6px 20px rgba(0,0,0,.18);white-space:nowrap;z-index:5;opacity:0;transition:opacity .08s;font-variant-numeric:tabular-nums}
+.tip.on{opacity:1}
+.tip b{font-weight:700}
+.tip .row{display:flex;justify-content:space-between;gap:16px}
+.tip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
+.section{margin:22px 0 10px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.section h2{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:22px;margin:0;letter-spacing:-.01em}
+.section .note{font-size:12px;color:var(--ink-3);max-width:70ch}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums;font-size:13px}
+th,td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);position:sticky;top:0}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1;font-weight:600;color:var(--ink);max-width:260px;overflow:hidden;text-overflow:ellipsis}
+th:first-child{background:var(--surface-2);z-index:2}
+tr:last-child td{border-bottom:0}
+td.heat{font-weight:600;border-left:2px solid var(--surface)}
+td.h0{background:var(--heat0-bg);color:var(--heat0-ink);font-weight:400}
+td.h1{background:var(--heat1-bg);color:var(--heat1-ink)}
+td.h2{background:var(--heat2-bg);color:var(--heat2-ink)}
+td.h3{background:var(--heat3-bg);color:var(--heat3-ink)}
+td.h4{background:var(--heat4-bg);color:var(--heat4-ink)}
+td.h5{background:var(--heat5-bg);color:var(--heat5-ink)}
+td.h6{background:var(--heat6-bg);color:var(--heat6-ink)}
+td.h7{background:var(--heat7-bg);color:var(--heat7-ink)}
+td.sep,th.sep{border-left:1px solid var(--line-2)}
+td.dim{color:var(--ink-3)}
+tr.total td{font-weight:700;background:var(--surface-2)}
+tr.total td:first-child{background:var(--surface-2)}
+tr.total td.heat{background:var(--surface-2);color:var(--ink)}
+td .n{display:block;font-size:10px;font-weight:500;color:inherit;opacity:.75;line-height:1}
+.scale{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-3)}
+.scale .sw{display:inline-flex;gap:1px}
+.scale .sw i{width:16px;height:10px;display:inline-block}
+.defs{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.defs h3{font-size:13px;margin:0 0 8px;font-weight:700}
+.defs p{margin:0 0 8px;color:var(--ink-2);max-width:90ch}
+.defs code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:var(--surface-2);padding:1px 5px;border-radius:4px;color:var(--ink)}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.grid2{grid-template-columns:1fr}h1{font-size:28px}.meta{text-align:left}}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:18px 14px 48px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+td.r1{background:var(--heatr1-bg);color:var(--heatr1-ink)}
+td.r2{background:var(--heatr2-bg);color:var(--heatr2-ink)}
+td.r3{background:var(--heatr3-bg);color:var(--heatr3-ink)}
+td.r4{background:var(--heatr4-bg);color:var(--heatr4-ink)}
+td.r5{background:var(--heatr5-bg);color:var(--heatr5-ink)}
+td.r6{background:var(--heatr6-bg);color:var(--heatr6-ink)}
+td.r7{background:var(--heatr7-bg);color:var(--heatr7-ink)}
+.recgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.rc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.rc .l{font-size:12px;font-weight:700;color:var(--ink-2)}
+.rc .v{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.rc .v span{font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:0}
+.rc .bar{display:flex;gap:2px;height:8px;margin:8px 0 8px;border-radius:3px;overflow:hidden;background:var(--surface-2)}
+.rc .bar i{display:block;height:100%}
+.rc .d{font-size:12px;color:var(--ink-2);line-height:1.4;font-variant-numeric:tabular-nums}
+.rc .s{font-size:11px;color:var(--ink-3);margin-top:4px}
+#metric .chip{font-size:12px;padding:5px 10px}
+@media (max-width:900px){.recgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.ptitle{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:500;font-size:30px;line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.topbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;margin-bottom:14px}
+.topbar h1{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:500;font-size:22px;margin:2px 0 0;letter-spacing:-.01em}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line-2);margin:0 0 22px}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:10px 16px;font:inherit;font-weight:700;font-size:14px;color:var(--ink-3);cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;border-radius:6px}
+.panel header{margin-bottom:16px}
+.def-strip{background:var(--surface);border:1px solid var(--exito);border-left-width:3px;border-radius:10px;padding:12px 16px;margin:0 0 18px;color:var(--ink-2)}
+.def-strip b{color:var(--ink)}
+.rc.mine{border-color:var(--exito);border-width:2px}
+.kpi.hero2{grid-column:span 2}
+.kpi.hero2 .v{font-size:34px}
+.cov{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.covrow{display:grid;grid-template-columns:52px 1fr 118px;align-items:center;gap:12px;padding:5px 0;font-variant-numeric:tabular-nums}
+.covrow + .covrow{border-top:1px solid var(--surface-2)}
+.covrow .ano{font-weight:700;font-size:13px}
+.covbar{height:15px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.covbar i{display:block;height:100%;background:var(--exito)}
+.covbar.low i{background:var(--proc)}
+.covbar.mid i{background:var(--parc)}
+.covnum{font-size:12px;color:var(--ink-2);text-align:right}
+.covnum b{color:var(--ink)}
+@media (max-width:560px){.covrow{grid-template-columns:44px 1fr 98px}}
+
+.kpis.kpis4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.kpis.kpis4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ask{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 0 16px}
+.askbar{display:flex;align-items:center;gap:8px}
+.askicon{width:22px;height:22px;flex:none;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.ask input{flex:1;min-width:0;border:1px solid var(--line-2);background:var(--surface-2);color:var(--ink);
+  border-radius:8px;padding:9px 12px;font:inherit;font-size:14px}
+.ask input:focus{outline:2px solid var(--focus);outline-offset:-1px;background:var(--surface)}
+.ask input::placeholder{color:var(--ink-3)}
+.askgo{appearance:none;border:0;background:var(--accent);color:var(--accent-ink);border-radius:8px;
+  padding:9px 16px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;flex:none}
+.askgo:disabled{opacity:.6;cursor:default}
+.mic{appearance:none;border:1px solid var(--line-2);background:var(--surface);border-radius:8px;
+  padding:8px 10px;font-size:15px;line-height:1;cursor:pointer;flex:none;color:var(--ink-2)}
+.mic.on{background:var(--proc);border-color:var(--proc);color:#fff}
+.mic:focus-visible,.askgo:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.askhint{font-size:11.5px;color:var(--ink-3);margin-top:7px;line-height:1.4}
+.askout{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.askread{font-size:12px;color:var(--ink-3);margin-bottom:8px}
+.askcard{background:var(--surface-2);border-left:3px solid var(--accent);border-radius:8px;padding:12px 14px}
+.askcard-h{font-size:12px;font-weight:700;color:var(--ink-2);letter-spacing:.01em}
+.askcard-v{font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1.15;margin:2px 0 6px}
+.askcard-v span{font-size:13px;font-weight:600;color:var(--ink-2);letter-spacing:0}
+.askcard p{margin:0 0 6px;font-size:13px;color:var(--ink-2);line-height:1.5}
+.askcard .askic{font-size:12px;color:var(--ink-3);margin:0}
+.asklista{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--ink-2);line-height:1.6}
+.askvazio{font-size:13px;color:var(--ink-2);margin:0}
+.tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--ink-3);border:1px solid var(--line-2);border-radius:4px;padding:1px 5px;vertical-align:1px}
+.ufbadge{display:inline-block;font-size:10px;font-weight:700;color:var(--ink-3);border:1px solid var(--line-2);
+  border-radius:4px;padding:1px 4px;vertical-align:1px}
+td.ruim{color:var(--proc);font-weight:700}
+td.bom{color:var(--exito);font-weight:700}
+tr.mark td{background:var(--exito-soft)}
+tr.mark td:first-child{background:var(--exito-soft)}
+.potbar{display:block;height:4px;border-radius:2px;background:var(--surface-2);margin-top:3px;overflow:hidden}
+.potbar i{display:block;height:100%;background:var(--proc)}
+.chipx{background:var(--exito-soft);border-color:var(--exito);color:var(--ink);font-weight:700}
+.linkbtn{appearance:none;border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:700;
+  text-decoration:underline;cursor:pointer;padding:0}
+.linkbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
+#a-scatter svg{min-height:300px}
+.controls[hidden],.chips[hidden]{display:none}
+</style>
+
+<div class="wrap">
+  <div class="topbar">
+    <div><div class="eyebrow">Parada Advogados · Odoo MMP</div><h1>Êxito e Reversão</h1></div>
+    <div class="meta">Dados do MMP em <b>__ASOF__</b> · meses fechados jan–ago/2026</div>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Painéis">
+    <button class="tab" role="tab" id="tab-exito" aria-selected="true" aria-controls="panel-exito">Sentenças</button>
+    <button class="tab" role="tab" id="tab-reversao" aria-selected="false" aria-controls="panel-reversao">Reversão recursal</button>
+    <button class="tab" role="tab" id="tab-atuacao" aria-selected="false" aria-controls="panel-atuacao">Onde atuar</button>
+  </div>
+
+
+<div class="panel" id="panel-exito">
+  <header>
+    <div>
+            <h2 class="ptitle">Sentenças — êxito por carteira</h2>
+      <p class="sub">Sentenças de 1º grau por mês de 2026, por cliente. Êxito = <b>improcedência</b> + <b>extinção</b>, sobre o total de sentenças com resultado registrado. Passe o mouse nos gráficos e tabelas para o detalhe.</p>
+    </div>
+    <div class="meta">Dados do MMP em <b id="e-asof"></b><br>Meses fechados: <b>jan–ago/2026</b> · setembro parcial<br>Comparativo: mesmo período de 2025</div>
+  </header>
+
+  <div class="controls">
+    <span class="eyebrow">Cliente</span>
+    <div class="chips" id="e-chips" role="group" aria-label="Filtrar por cliente"></div>
+    <span class="spacer"></span>
+    <button class="toggle" id="e-cmp" aria-pressed="true"><span class="sw"></span>Comparar com 2025</button>
+  </div>
+
+  <div class="kpis" id="e-kpis"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="h"><h2 id="e-t-rate">Taxa de êxito mensal</h2><span class="note">jan–ago · % das sentenças com resultado</span></div>
+      <div class="chart" id="e-c-rate"></div>
+      <div class="legend"><span><i class="line"></i>2026</span><span id="e-lg-2025"><i class="dash"></i>2025, mesmo mês</span></div>
+    </div>
+    <div class="card">
+      <div class="h"><h2 id="e-t-vol">Sentenças por mês e resultado</h2><span class="note">jan–ago · quantidade</span></div>
+      <div class="chart" id="e-c-vol"></div>
+      <div class="legend"><span><i style="background:var(--exito)"></i>Êxito (improcedente + extinção)</span><span><i style="background:var(--parc)"></i>Parcialmente procedente</span><span><i style="background:var(--proc)"></i>Procedente</span><span class="note">acordos homologados só na tabela</span></div>
+    </div>
+  </div>
+
+  <div class="section"><h2>Taxa de êxito por cliente</h2><span class="note">Cada célula: % de êxito no mês (nº de sentenças embaixo). Colunas finais: acumulado jan–ago de 2026 e de 2025.</span></div>
+  <div class="tablewrap"><table id="e-t-clients"></table></div>
+  <div class="scale" style="margin-top:8px"><span>menor êxito</span><span class="sw"><i style="background:var(--heat1-bg)"></i><i style="background:var(--heat2-bg)"></i><i style="background:var(--heat3-bg)"></i><i style="background:var(--heat4-bg)"></i><i style="background:var(--heat5-bg)"></i><i style="background:var(--heat6-bg)"></i><i style="background:var(--heat7-bg)"></i></span><span>maior êxito</span><span style="margin-left:10px">escala 30% → 90%</span></div>
+
+  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com 40 sentenças ou mais em 2026; os demais somados em "Outros projetos". Ordenado pelo volume de 2026.</span></div>
+  <div class="tablewrap"><table id="e-t-projects"></table></div>
+
+  <div class="defs">
+    <h3>Como os números são calculados</h3>
+    <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) com <code>data_sentenca</code> no mês, agrupado por <code>grupo_id</code> (cliente) ou <code>projeto_id</code> (projeto), pelo <code>tipo_sentenca_id</code>. Inclui casos arquivados. Cada caso conta uma vez, com a sentença registrada nele no momento da extração.</p>
+    <p><b>Êxito:</b> tipos <i>Improcedente</i> e <i>Extinção sem Julgamento do Mérito</i> (mais 4 casos de <i>Extinção da Execução</i> no período). <b>Taxa:</b> êxito ÷ (improcedente + extinção + parcialmente procedente + procedente + homologação de acordo). Sentenças sem tipo informado ficam fora do denominador e aparecem na coluna "s/ tipo" das tabelas.</p>
+    <p><b>Setembro</b> só tem dados até <span id="e-asof2"></span>; por isso os gráficos e os acumulados param em agosto, e a coluna "set" das tabelas está marcada como parcial.</p>
+    <p id="e-outros-note"></p>
+  </div>
+</div>
+
+<script id="e-data" type="application/json">__EDATA__</script>
+<script>
+(function(){
+  const D = JSON.parse(document.getElementById('e-data').textContent);
+  const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const LAST = D.lastFullMonth; // 8
+  const fmt = n => n.toLocaleString('pt-BR');
+  const pct = (r, d=0) => r==null ? '–' : (r*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+  document.getElementById('e-asof').textContent = D.asOf; document.getElementById('e-asof2').textContent = D.asOf;
+
+  // ---- agregação ----
+  const zero = () => [0,0,0,0,0,0];
+  const add = (a,b) => a.map((v,i)=>v+(b[i]||0));
+  const sumMonths = (y, m1, m2) => { let s = zero(); for (let m=m1; m<=m2; m++) s = add(s, y[m-1]); return s; };
+  const denom = a => a[0]+a[1]+a[2]+a[3]+a[4];
+  const rate = a => denom(a) ? (a[0]+a[1])/denom(a) : null;
+  const allClients = { name:'Todos', y:{ '2025': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
+  const entities = [allClients, ...D.clients];
+  let sel = 'Todos', cmp = true;
+
+  // ---- chips ----
+  const chips = document.getElementById('e-chips');
+  entities.forEach(e => { const b = document.createElement('button'); b.className='chip'; b.textContent = e.name; b.setAttribute('aria-pressed', e.name===sel); b.addEventListener('click', ()=>{ sel = e.name; render(); }); chips.appendChild(b); });
+  const cmpBtn = document.getElementById('e-cmp');
+  cmpBtn.addEventListener('click', ()=>{ cmp = !cmp; cmpBtn.setAttribute('aria-pressed', cmp); render(); });
+  const outros = D.clients.find(c=>c.name==='Outros');
+  if (outros && outros.members) document.getElementById('e-outros-note').innerHTML = '<b>"Outros"</b> reúne: ' + outros.members.join(', ') + '.';
+
+  // ---- tooltip ----
+  function tipFor(container){ let t = container.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className='tip'; container.appendChild(t);} return t; }
+  function showTip(container, html, x, y){ const t = tipFor(container); t.innerHTML = html; t.classList.add('on'); const w = container.clientWidth; const tw = t.offsetWidth; let left = x + 14; if (left + tw > w) left = x - tw - 14; t.style.left = Math.max(0,left)+'px'; t.style.top = Math.max(0, y - 10)+'px'; }
+  function hideTip(container){ const t = container.querySelector('.tip'); if (t) t.classList.remove('on'); }
+
+  // ---- KPIs ----
+  function renderKpis(e){
+    const a26 = sumMonths(e.y['2026'],1,LAST), a25 = sumMonths(e.y['2025'],1,LAST);
+    const r26 = rate(a26), r25 = rate(a25);
+    const dRate = (r26!=null && r25!=null) ? (r26-r25)*100 : null;
+    const deltaHtml = dRate==null ? '' : `<span class="${dRate>=0?'delta-up':'delta-down'}">${dRate>=0?'▲':'▼'} ${Math.abs(dRate).toLocaleString('pt-BR',{maximumFractionDigits:1})} p.p.</span> vs 2025 (${pct(r25,1)})`;
+    const share = (i) => denom(a26) ? pct(a26[i]/denom(a26),0) : '–';
+    const k = [
+      {l:'Sentenças jan–ago/2026', v:fmt(denom(a26)), d: cmp ? `${fmt(denom(a25))} em 2025` : (a26[5]? fmt(a26[5])+' sem tipo' : '&nbsp;')},
+      {l:'Taxa de êxito', v:pct(r26,1), d: cmp ? deltaHtml : `${fmt(a26[0]+a26[1])} de ${fmt(denom(a26))}`, hero:true},
+      {l:'Improcedentes', v:fmt(a26[0]), d:`${share(0)} das sentenças`},
+      {l:'Extinções sem mérito', v:fmt(a26[1]), d:`${share(1)} das sentenças`},
+      {l:'Parcialmente procedentes', v:fmt(a26[2]), d:`${share(2)} das sentenças`},
+      {l:'Procedentes', v:fmt(a26[3]), d:`${share(3)} das sentenças`},
+    ];
+    document.getElementById('e-kpis').innerHTML = k.map(x=>`<div class="kpi${x.hero?' hero':''}"><div class="l">${x.l}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
+  }
+
+  // ---- gráfico de linha (taxa) ----
+  function renderRate(e){
+    const W=520, H=260, P={l:40,r:44,t:14,b:28};
+    const iw = W-P.l-P.r, ih = H-P.t-P.b;
+    const xs = i => P.l + iw*(i)/(LAST-1);
+    const ys = r => P.t + ih*(1-r);
+    const r26 = Array.from({length:LAST},(_,i)=>rate(e.y['2026'][i]));
+    const r25 = Array.from({length:LAST},(_,i)=>rate(e.y['2025'][i]));
+    const ticks = [0,.25,.5,.75,1];
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Taxa de êxito mensal de ${e.name}">`;
+    g += '<g class="grid">' + ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}"/>`).join('') + '</g>';
+    g += ticks.map(t=>`<text x="${P.l-6}" y="${ys(t)+4}" text-anchor="end">${Math.round(t*100)}%</text>`).join('');
+    g += Array.from({length:LAST},(_,i)=>`<text x="${xs(i)}" y="${H-8}" text-anchor="middle">${MESES[i]}</text>`).join('');
+    const path = (arr) => arr.map((r,i)=> r==null ? null : `${i===0||arr[i-1]==null?'M':'L'}${xs(i).toFixed(1)},${ys(r).toFixed(1)}`).filter(Boolean).join(' ');
+    if (cmp) g += `<path d="${path(r25)}" fill="none" stroke="var(--ghost)" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>`;
+    // área suave sob 2026
+    const first = r26.findIndex(v=>v!=null), last = r26.length-1-[...r26].reverse().findIndex(v=>v!=null);
+    if (first>=0) g += `<path d="${path(r26)} L${xs(last).toFixed(1)},${ys(0)} L${xs(first).toFixed(1)},${ys(0)} Z" fill="var(--exito)" opacity="0.08"/>`;
+    g += `<path d="${path(r26)}" fill="none" stroke="var(--exito)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    r26.forEach((r,i)=>{ if(r!=null) g += `<circle cx="${xs(i)}" cy="${ys(r)}" r="4" fill="var(--exito)" stroke="var(--surface)" stroke-width="2"/>`; });
+    if (last>=0 && r26[last]!=null) g += `<text class="lbl" x="${xs(last)+8}" y="${ys(r26[last])+4}" style="fill:var(--exito)">${pct(r26[last],0)}</text>`;
+    if (cmp){ const l25 = r25.length-1-[...r25].reverse().findIndex(v=>v!=null); if (l25>=0 && r25[l25]!=null && Math.abs(ys(r25[l25])-ys(r26[last]))>14) g += `<text x="${xs(l25)+8}" y="${ys(r25[l25])+4}" style="fill:var(--ghost);font-weight:600">${pct(r25[l25],0)}</text>`; }
+    g += `<line id="e-xh" x1="0" x2="0" y1="${P.t}" y2="${H-P.b}" stroke="var(--line-2)" stroke-width="1" style="display:none"/>`;
+    g += `<rect x="${P.l}" y="${P.t}" width="${iw}" height="${ih}" fill="transparent" id="e-rate-hit"/>`;
+    g += '</svg>';
+    const c = document.getElementById('e-c-rate'); c.innerHTML = g;
+    const svg = c.querySelector('svg'), hit = c.querySelector('#e-rate-hit'), xh = c.querySelector('#e-xh');
+    hit.addEventListener('mousemove', ev => {
+      const rect = svg.getBoundingClientRect(); const sx = (ev.clientX-rect.left)*W/rect.width; const i = Math.max(0, Math.min(LAST-1, Math.round((sx-P.l)/iw*(LAST-1))));
+      xh.setAttribute('x1', xs(i)); xh.setAttribute('x2', xs(i)); xh.style.display='';
+      const a = e.y['2026'][i], b = e.y['2025'][i];
+      let html = `<b>${MESES[i]}/2026</b> · ${fmt(denom(a))} sentenças<div class="row"><span><i style="background:var(--exito)"></i>Êxito</span><b>${pct(rate(a),1)}</b></div><div class="row"><span>improcedentes</span><span>${fmt(a[0])}</span></div><div class="row"><span>extinções</span><span>${fmt(a[1])}</span></div><div class="row"><span><i style="background:var(--parc)"></i>parciais</span><span>${fmt(a[2])}</span></div><div class="row"><span><i style="background:var(--proc)"></i>procedentes</span><span>${fmt(a[3])}</span></div>`;
+      if (a[4]) html += `<div class="row"><span>acordos</span><span>${fmt(a[4])}</span></div>`;
+      if (cmp) html += `<div class="row" style="margin-top:4px;opacity:.8"><span>${MESES[i]}/2025</span><span>${pct(rate(b),1)} · ${fmt(denom(b))}</span></div>`;
+      showTip(c, html, (ev.clientX-rect.left), (ev.clientY-rect.top));
+    });
+    hit.addEventListener('mouseleave', ()=>{ hideTip(c); xh.style.display='none'; });
+  }
+
+  // ---- barras empilhadas (volume) ----
+  function renderVol(e){
+    const W=520, H=260, P={l:44,r:12,t:14,b:28};
+    const iw = W-P.l-P.r, ih = H-P.t-P.b;
+    const months = Array.from({length:LAST},(_,i)=>e.y['2026'][i]);
+    const max = Math.max(1, ...months.map(a=>a[0]+a[1]+a[2]+a[3]));
+    const nice = niceMax(max);
+    const ys = v => P.t + ih*(1-v/nice);
+    const bw = iw/LAST, barw = Math.min(40, bw*0.62);
+    const ticks = [0,.25,.5,.75,1].map(t=>t*nice);
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sentenças por mês e resultado de ${e.name}">`;
+    g += '<g class="grid">' + ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}"/>`).join('') + '</g>';
+    g += ticks.map(t=>`<text x="${P.l-6}" y="${ys(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('');
+    months.forEach((a,i)=>{
+      const x = P.l + bw*i + (bw-barw)/2;
+      const segs = [[a[0]+a[1],'var(--exito)'],[a[2],'var(--parc)'],[a[3],'var(--proc)']];
+      let y0 = 0; let topK = -1; segs.forEach(([v],k)=>{ if (v) topK = k; });
+      segs.forEach(([v,col],k)=>{ if(!v) return; const y1 = ys(y0), y2 = ys(y0+v); const h = Math.max(0, y1-y2-2); g += `<rect x="${x.toFixed(1)}" y="${(y2+1).toFixed(1)}" width="${barw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}" rx="${k===topK?3:0}"/>`; y0 += v; });
+      g += `<text x="${(x+barw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">${MESES[i]}</text>`;
+      const tot = a[0]+a[1]+a[2]+a[3]; if (tot) g += `<text class="lbl" x="${(x+barw/2).toFixed(1)}" y="${(ys(tot)-5).toFixed(1)}" text-anchor="middle">${fmt(tot)}</text>`;
+      g += `<rect x="${(P.l+bw*i).toFixed(1)}" y="${P.t}" width="${bw.toFixed(1)}" height="${ih}" fill="transparent" data-hit="${i}"/>`;
+    });
+    g += '</svg>';
+    const c = document.getElementById('e-c-vol'); c.innerHTML = g;
+    const svg = c.querySelector('svg');
+    svg.querySelectorAll('[data-hit]').forEach(r => {
+      r.addEventListener('mousemove', ev => { const i = +r.getAttribute('data-hit'); const a = e.y['2026'][i]; const rect = svg.getBoundingClientRect();
+        let html = `<b>${MESES[i]}/2026</b> · ${fmt(denom(a))} sentenças · êxito ${pct(rate(a),1)}<div class="row"><span><i style="background:var(--exito)"></i>improcedentes</span><span>${fmt(a[0])}</span></div><div class="row"><span><i style="background:var(--exito)"></i>extinções</span><span>${fmt(a[1])}</span></div><div class="row"><span><i style="background:var(--parc)"></i>parciais</span><span>${fmt(a[2])}</span></div><div class="row"><span><i style="background:var(--proc)"></i>procedentes</span><span>${fmt(a[3])}</span></div>`;
+        if (a[4]) html += `<div class="row"><span>acordos homologados</span><span>${fmt(a[4])}</span></div>`; if (a[5]) html += `<div class="row"><span>sem tipo</span><span>${fmt(a[5])}</span></div>`;
+        showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top); });
+      r.addEventListener('mouseleave', ()=>hideTip(c));
+    });
+  }
+  function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v/p; const n = f<=1?1:f<=2?2:f<=2.5?2.5:f<=4?4:f<=5?5:f<=8?8:10; return n*p; }
+
+  // ---- tabelas heat ----
+  function heatClass(r){ if (r==null) return 'h0'; const lo=.30, hi=.90; const t = Math.max(0, Math.min(1, (r-lo)/(hi-lo))); return 'h'+(1+Math.min(6, Math.floor(t*7))); }
+  function renderTable(id, rows, label){
+    const head = `<tr><th>${label}</th>${MESES.slice(0,LAST).map(m=>`<th>${m}</th>`).join('')}<th>set*</th><th class="sep">jan–ago 2026</th><th>jan–ago 2025</th><th class="sep">sentenças 2026</th><th>s/ tipo</th></tr>`;
+    const body = rows.map((e,idx)=>{
+      const cells = MESES.slice(0,LAST).map((_,i)=>{ const a = e.y['2026'][i]; const r = rate(a); return `<td class="heat ${heatClass(r)}" title="${e.name} · ${MESES[i]}/2026: ${fmt(a[0])} improc., ${fmt(a[1])} extinções, ${fmt(a[2])} parciais, ${fmt(a[3])} procedentes${a[4]?', '+fmt(a[4])+' acordos':''}">${pct(r,0)}<span class="n">${fmt(denom(a))}</span></td>`; }).join('');
+      const s = e.y['2026'][8]; const rs = rate(s);
+      const a26 = sumMonths(e.y['2026'],1,LAST), a25 = sumMonths(e.y['2025'],1,LAST);
+      const semTipo = sumMonths(e.y['2026'],1,9)[5];
+      return `<tr class="${e.total?'total':''}"><td title="${e.name}">${e.name}</td>${cells}<td class="dim" title="setembro parcial">${pct(rs,0)}<span class="n">${fmt(denom(s))}</span></td><td class="sep heat ${heatClass(rate(a26))}">${pct(rate(a26),1)}</td><td class="dim">${pct(rate(a25),1)}<span class="n">${fmt(denom(a25))}</span></td><td class="sep">${fmt(denom(a26)+denom(s))}</td><td class="dim">${semTipo?fmt(semTipo):'–'}</td></tr>`;
+    }).join('');
+    document.getElementById(id).innerHTML = head + body;
+  }
+
+  function render(){
+    chips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.textContent===sel));
+    const e = entities.find(x=>x.name===sel) || allClients;
+    document.getElementById('e-t-rate').textContent = 'Taxa de êxito mensal · ' + e.name;
+    document.getElementById('e-t-vol').textContent = 'Sentenças por mês e resultado · ' + e.name;
+    document.getElementById('e-lg-2025').style.display = cmp ? '' : 'none';
+    renderKpis(e); renderRate(e); renderVol(e);
+  }
+  allClients.total = true;
+  renderTable('e-t-clients', entities, 'Cliente');
+  const allP = { name:'Santander (todos os projetos)', y:{ '2025': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
+  allP.total = true; allClients.total = true;
+  renderTable('e-t-projects', [allP, ...D.projects], 'Projeto');
+  render();
+})();
+</script>
+
+
+<div class="panel" id="panel-reversao" hidden>
+  <header>
+    <div>
+      <h2 class="ptitle">Reversão recursal</h2>
+      <p class="sub">Dos casos em que <b>nós</b> interpusemos recurso, quantos tiveram a decisão mudada a nosso favor. Acórdãos de 2026, por mês e por cliente.</p>
+    </div>
+    <div class="meta">Dados do MMP em <b id="r-asof"></b><br>Meses fechados: <b>jan–ago/2026</b> · setembro parcial<br>Comparativo com 2025 <b>desligado</b>: convenção de registro diferente até ago/25</div>
+  </header>
+
+  <div class="def-strip">
+    <b>Reversão recursal</b> = casos em que o escritório recorreu de uma sentença desfavorável <b>e o acórdão mudou o resultado a nosso favor</b> ÷ todos os casos em que recorremos de sentença desfavorável. Não entram aqui os recursos da parte contrária — quando o adversário recorre e nós apenas sustentamos a vitória de 1º grau, isso é <i>defesa</i>, não reversão, e aparece separado mais abaixo.
+  </div>
+
+  <div class="controls">
+    <span class="eyebrow">Cliente</span>
+    <div class="chips" id="r-chips" role="group" aria-label="Filtrar por cliente"></div>
+    <span class="spacer"></span>
+    <button class="toggle" id="r-cmp" aria-pressed="false" title="Até agosto de 2025 o MMP registrava a sentença modificada com outra convenção"><span class="sw"></span>Comparar com 2025 <span style="font-weight:500;color:var(--ink-3)">(registro diferente até ago/25)</span></button>
+  </div>
+
+  <div class="kpis" id="r-kpis"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="h"><h2 id="r-t-rate">Reversão recursal por mês</h2><span class="note">jan–ago · só recursos nossos</span></div>
+      <div class="chart" id="r-c-rate"></div>
+      <div class="legend"><span><i class="line"></i>Reversão recursal — recursos nossos que mudaram a decisão</span><span id="r-lg-2025"><i class="dash"></i>2025, mesmo mês</span></div>
+    </div>
+    <div class="card">
+      <div class="h"><h2 id="r-t-vol">Recursos nossos por mês</h2><span class="note">jan–ago · quantidade de acórdãos</span></div>
+      <div class="chart" id="r-c-vol"></div>
+      <div class="legend"><span><i style="background:var(--exito)"></i>Mudou a decisão a favor</span><span><i style="background:var(--parc)"></i>Manteve a condenação</span></div>
+    </div>
+  </div>
+
+  <div class="section"><h2 id="r-t-rec">Recurso nosso × recurso do adversário</h2><span class="note">jan–ago/2026. São duas coisas diferentes e o indicador antigo somava as duas.</span></div>
+  <div class="recgrid" id="r-rec"></div>
+
+  <div class="section" style="align-items:center">
+    <h2>Por cliente, mês a mês</h2>
+    <div class="chips" id="r-metric" role="group" aria-label="Métrica das tabelas"></div>
+  </div>
+  <p class="note" id="r-metric-note" style="margin:-4px 0 10px;font-size:12px;color:var(--ink-3)"></p>
+  <div class="tablewrap"><table id="r-t-clients"></table></div>
+  <div class="scale" id="r-scale" style="margin-top:8px"></div>
+
+  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com mais acórdãos em 2026; os demais em "Outros projetos". Mesma métrica selecionada acima.</span></div>
+  <div class="tablewrap"><table id="r-t-projects"></table></div>
+
+  <div class="section"><h2>Quanto disto dá para auditar</h2><span class="note">Só é possível conferir o resultado gravado contra o acórdão quando o inteiro teor está no sistema. Em 2026 a cobertura é boa; nos anos anteriores, não.</span></div>
+  <div class="cov" id="r-cov"></div>
+
+  <div class="defs">
+    <h3>Como os números são calculados</h3>
+    <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) com <code>data_acordao</code> no mês, agrupado por <code>grupo_id</code> (cliente) ou <code>projeto_id</code> (projeto). Cada caso conta uma vez; inclui casos arquivados.</p>
+    <p><b>Quem recorreu</b> vem de <code>dossie_recurso</code>. "Recurso nosso" reúne <i>parte representada</i> e <i>ambas as partes</i>. <b>Atenção:</b> o campo está vazio em parte dos casos, que ficam fora da conta de reversão recursal — é a maior fragilidade deste painel.</p>
+    <p><b>Classes:</b> <i>favorável</i> = Improcedente ou Extinção; <i>desfavorável</i> = Procedente ou Parcialmente Procedente. Mudança de tipo dentro da mesma classe (Parcial → Procedente, que o MMP usa para "condenação mantida") não conta como reversão.</p>
+    <p><b>Êxito em 2º grau</b> (métrica antiga, mantida para referência) = acórdãos que terminam favoráveis ÷ todos os classificáveis, <i>independente de quem recorreu</i>. Fica muito acima da reversão recursal porque inclui as sentenças que já eram favoráveis e apenas foram mantidas.</p>
+    <p><b>Atenção ao 2025:</b> até agosto de 2025 o campo "sentença modificada" seguia outra convenção — "Procedente" indicava <i>recurso provido</i>, não o resultado do caso — e parte desses registros foi ajustada em lote em março e setembro de 2026. Por isso o comparativo vem desligado.</p>
+    <p><b>Auditoria por leitura dos acórdãos:</b> uma checagem automática do inteiro teor contra o resultado gravado está em andamento e <b>não</b> alimenta os números acima. Os apontamentos dela ainda têm precisão baixa (cerca de 1 em 3 confirmados em leitura manual) e não devem corrigir o indicador enquanto a validação não fechar.</p>
+    <p id="r-outros-note"></p>
+  </div>
+</div>
+
+<script id="r-data" type="application/json">__RDATA__</script>
+<script>
+(function(){
+  const D = JSON.parse(document.getElementById('r-data').textContent);
+  const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const LAST = D.lastFullMonth;
+  const fmt = n => n.toLocaleString('pt-BR');
+  const pct = (r, d=0) => r==null ? '\u2013' : (r*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+  document.getElementById('r-asof').textContent = D.asOf;
+
+  const zero = () => [0,0,0,0,0];
+  const add = (a,b) => a.map((v,i)=>v+(b[i]||0));
+  const sumM = (arr,m1,m2) => { let s = zero(); for (let m=m1;m<=m2;m++) s = add(s, arr[m-1]); return s; };
+  const classif = a => a[0]+a[1]+a[2]+a[3];
+  const rRev    = a => (a[2]+a[3]) ? a[2]/(a[2]+a[3]) : null;
+  const rContra = a => (a[0]+a[1]) ? a[1]/(a[0]+a[1]) : null;
+  const rExito  = a => classif(a) ? (a[0]+a[2])/classif(a) : null;
+
+  const METRICS = {
+    rev:   {label:'Reversão recursal', src:'nos', fn:rRev, den:a=>a[2]+a[3], lo:0, hi:.4, ramp:'b',
+            note:'Dos casos em que NÓS recorremos de sentença desfavorável, % em que o acórdão mudou a decisão a favor. Número embaixo = recursos nossos com sentença desfavorável.'},
+    exito: {label:'Êxito em 2º grau (todos)', src:'tot', fn:rExito, den:a=>classif(a), lo:.3, hi:.9, ramp:'b',
+            note:'Métrica antiga: % dos acórdãos classificáveis que terminam favoráveis, independente de quem recorreu. Inclui vitórias de 1º grau apenas mantidas.'},
+    contra:{label:'Reversão contra', src:'tot', fn:rContra, den:a=>a[0]+a[1], lo:0, hi:.5, ramp:'r',
+            note:'% dos acórdãos em casos com sentença favorável que viraram desfavoráveis. Quanto mais vermelho, pior.'},
+  };
+
+  const sumAll = (key,y) => Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c[key][y][i]),zero()));
+  const allClients = { name:'Todos', total:true,
+    tot:{'2025':sumAll('tot','2025'),'2026':sumAll('tot','2026')},
+    nos:{'2025':sumAll('nos','2025'),'2026':sumAll('nos','2026')} };
+  const entities = [allClients, ...D.clients];
+  let sel = 'Todos', cmp = false, metric = 'rev';
+
+  const chips = document.getElementById('r-chips');
+  entities.forEach(e => { const b = document.createElement('button'); b.className='chip'; b.textContent = e.name; b.addEventListener('click', ()=>{ sel = e.name; render(); }); chips.appendChild(b); });
+  const cmpBtn = document.getElementById('r-cmp');
+  cmpBtn.addEventListener('click', ()=>{ cmp = !cmp; cmpBtn.setAttribute('aria-pressed', cmp); render(); });
+  const mchips = document.getElementById('r-metric');
+  Object.entries(METRICS).forEach(([k,m]) => { const b = document.createElement('button'); b.className='chip'; b.dataset.k = k; b.textContent = m.label; b.addEventListener('click', ()=>{ metric = k; renderTables(); }); mchips.appendChild(b); });
+  const outros = D.clients.find(c=>c.name==='Outros');
+  if (outros && outros.members) document.getElementById('r-outros-note').innerHTML = '<b>"Outros"</b> reúne: ' + outros.members.join(', ') + '.';
+
+  function tipFor(c){ let t = c.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className='tip'; c.appendChild(t);} return t; }
+  function showTip(c, html, x, y){ const t = tipFor(c); t.innerHTML = html; t.classList.add('on'); const w = c.clientWidth, tw = t.offsetWidth; let left = x + 14; if (left + tw > w) left = x - tw - 14; t.style.left = Math.max(0,left)+'px'; t.style.top = Math.max(0, y - 10)+'px'; }
+  function hideTip(c){ const t = c.querySelector('.tip'); if (t) t.classList.remove('on'); }
+
+  function renderKpis(e){
+    const n26 = sumM(e.nos['2026'],1,LAST), n25 = sumM(e.nos['2025'],1,LAST), t26 = sumM(e.tot['2026'],1,LAST);
+    const rv = rRev(n26), rv25 = rRev(n25);
+    const d = (rv!=null && rv25!=null) ? (rv-rv25)*100 : null;
+    const delta = d==null ? '' : ' · <span class="'+(d>=0?'delta-up':'delta-down')+'">'+(d>=0?'\u25b2':'\u25bc')+' '+Math.abs(d).toLocaleString('pt-BR',{maximumFractionDigits:1})+' p.p.</span> vs 2025';
+    const k = [
+      {l:'Reversão recursal · jan–ago/2026', v:pct(rv,1), hero:true,
+       d:'<b>'+fmt(n26[2])+'</b> de '+fmt(n26[2]+n26[3])+' recursos nossos mudaram a decisão'+(cmp?delta:'')},
+      {l:'Recursos nossos julgados', v:fmt(classif(n26)+n26[4]), d:'acórdãos em que recorremos'},
+      {l:'Mantiveram a condenação', v:fmt(n26[3]), d:pct(n26[2]+n26[3]?n26[3]/(n26[2]+n26[3]):null,0)+' dos nossos recursos'},
+      {l:'Êxito em 2º grau (todos)', v:pct(rExito(t26),1), d:'métrica antiga · '+fmt(classif(t26))+' acórdãos, qualquer recorrente'},
+    ];
+    document.getElementById('r-kpis').innerHTML = k.map(x=>'<div class="kpi'+(x.hero?' hero hero2':'')+'"><div class="l">'+x.l+'</div><div class="v">'+x.v+'</div><div class="d">'+x.d+'</div></div>').join('');
+  }
+
+  function renderRate(e){
+    const W=520, H=250, P={l:40,r:48,t:14,b:28};
+    const iw = W-P.l-P.r, ih = H-P.t-P.b;
+    const xs = i => P.l + iw*i/(LAST-1);
+    const a26 = Array.from({length:LAST},(_,i)=>rRev(e.nos['2026'][i]));
+    const a25 = Array.from({length:LAST},(_,i)=>rRev(e.nos['2025'][i]));
+    const vals = [...a26, ...(cmp?a25:[])].filter(v=>v!=null);
+    const maxR = Math.max(0.2, Math.min(1, Math.ceil((Math.max(0.05, ...vals)+0.02)/0.1)*0.1));
+    const ys = r => P.t + ih*(1-r/maxR);
+    const ticks = [0,.25,.5,.75,1].map(t=>t*maxR);
+    let g = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Reversão recursal por mês de '+e.name+'">';
+    g += '<g class="grid">' + ticks.map(t=>'<line x1="'+P.l+'" x2="'+(W-P.r)+'" y1="'+ys(t)+'" y2="'+ys(t)+'"/>').join('') + '</g>';
+    g += ticks.map(t=>'<text x="'+(P.l-6)+'" y="'+(ys(t)+4)+'" text-anchor="end">'+Math.round(t*100)+'%</text>').join('');
+    g += Array.from({length:LAST},(_,i)=>'<text x="'+xs(i)+'" y="'+(H-8)+'" text-anchor="middle">'+MESES[i]+'</text>').join('');
+    const path = arr => arr.map((r,i)=> r==null ? null : (i===0||arr[i-1]==null?'M':'L')+xs(i).toFixed(1)+','+ys(r).toFixed(1)).filter(Boolean).join(' ');
+    if (cmp) g += '<path d="'+path(a25)+'" fill="none" stroke="var(--ghost)" stroke-width="2" stroke-dasharray="5 4"/>';
+    g += '<path d="'+path(a26)+'" fill="none" stroke="var(--exito)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    a26.forEach((r,i)=>{ if(r!=null) g += '<circle cx="'+xs(i)+'" cy="'+ys(r)+'" r="4" fill="var(--exito)" stroke="var(--surface)" stroke-width="2"/>'; });
+    const li = a26.length-1-[...a26].reverse().findIndex(v=>v!=null);
+    if (a26[li]!=null) g += '<text class="lbl" x="'+(xs(li)+8)+'" y="'+(ys(a26[li])+4)+'" style="fill:var(--exito)">'+pct(a26[li],0)+'</text>';
+    g += '<line id="r-xh" x1="0" x2="0" y1="'+P.t+'" y2="'+(H-P.b)+'" stroke="var(--line-2)" style="display:none"/>';
+    g += '<rect x="'+P.l+'" y="'+P.t+'" width="'+iw+'" height="'+ih+'" fill="transparent" id="r-rate-hit"/></svg>';
+    const c = document.getElementById('r-c-rate'); c.innerHTML = g;
+    const svg = c.querySelector('svg'), hit = c.querySelector('#r-rate-hit'), xh = c.querySelector('#r-xh');
+    hit.addEventListener('mousemove', ev => {
+      const rect = svg.getBoundingClientRect(); const sx = (ev.clientX-rect.left)*W/rect.width;
+      const i = Math.max(0, Math.min(LAST-1, Math.round((sx-P.l)/iw*(LAST-1))));
+      xh.setAttribute('x1', xs(i)); xh.setAttribute('x2', xs(i)); xh.style.display='';
+      const a = e.nos['2026'][i];
+      let html = '<b>'+MESES[i]+'/2026</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><b>'+fmt(a[2])+'</b></div><div class="row"><span>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
+      if (cmp) html += '<div class="row" style="margin-top:4px;opacity:.8"><span>'+MESES[i]+'/2025</span><span>'+pct(rRev(e.nos['2025'][i]),0)+'</span></div>';
+      showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top);
+    });
+    hit.addEventListener('mouseleave', ()=>{ hideTip(c); xh.style.display='none'; });
+  }
+
+  function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v/p; const n = f<=1?1:f<=2?2:f<=2.5?2.5:f<=4?4:f<=5?5:f<=8?8:10; return n*p; }
+  function renderVol(e){
+    const W=520, H=250, P={l:44,r:12,t:14,b:28};
+    const iw = W-P.l-P.r, ih = H-P.t-P.b;
+    const months = Array.from({length:LAST},(_,i)=>e.nos['2026'][i]);
+    const max = Math.max(1, ...months.map(a=>a[2]+a[3]));
+    const nice = niceMax(max); const ys = v => P.t + ih*(1-v/nice);
+    const bw = iw/LAST, barw = Math.min(40, bw*0.62);
+    const ticks = [0,.25,.5,.75,1].map(t=>t*nice);
+    let g = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Recursos nossos por mês de '+e.name+'">';
+    g += '<g class="grid">' + ticks.map(t=>'<line x1="'+P.l+'" x2="'+(W-P.r)+'" y1="'+ys(t)+'" y2="'+ys(t)+'"/>').join('') + '</g>';
+    g += ticks.map(t=>'<text x="'+(P.l-6)+'" y="'+(ys(t)+4)+'" text-anchor="end">'+fmt(Math.round(t))+'</text>').join('');
+    months.forEach((a,i)=>{
+      const x = P.l + bw*i + (bw-barw)/2;
+      const segs = [[a[2],'var(--exito)'],[a[3],'var(--parc)']];
+      let y0 = 0, topK = -1; segs.forEach(([v],k)=>{ if (v) topK = k; });
+      segs.forEach(([v,col],k)=>{ if(!v) return; const y1 = ys(y0), y2 = ys(y0+v); const h = Math.max(0, y1-y2-2);
+        g += '<rect x="'+x.toFixed(1)+'" y="'+(y2+1).toFixed(1)+'" width="'+barw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+col+'" rx="'+(k===topK?3:0)+'"/>'; y0 += v; });
+      g += '<text x="'+(x+barw/2).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+MESES[i]+'</text>';
+      const tot = a[2]+a[3]; if (tot) g += '<text class="lbl" x="'+(x+barw/2).toFixed(1)+'" y="'+(ys(tot)-5).toFixed(1)+'" text-anchor="middle">'+fmt(tot)+'</text>';
+      g += '<rect x="'+(P.l+bw*i).toFixed(1)+'" y="'+P.t+'" width="'+bw.toFixed(1)+'" height="'+ih+'" fill="transparent" data-hit="'+i+'"/>';
+    });
+    g += '</svg>';
+    const c = document.getElementById('r-c-vol'); c.innerHTML = g;
+    const svg = c.querySelector('svg');
+    svg.querySelectorAll('[data-hit]').forEach(r => {
+      r.addEventListener('mousemove', ev => { const i = +r.getAttribute('data-hit'); const a = e.nos['2026'][i]; const rect = svg.getBoundingClientRect();
+        const html = '<b>'+MESES[i]+'/2026</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><span>'+fmt(a[2])+'</span></div><div class="row"><span><i style="background:var(--parc)"></i>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
+        showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top); });
+      r.addEventListener('mouseleave', ()=>hideTip(c));
+    });
+  }
+
+  function renderRec(e){
+    const n = sumM(e.nos['2026'],1,LAST), t = sumM(e.tot['2026'],1,LAST);
+    const outros = t.map((v,i)=>v-n[i]);
+    const cards = [
+      {t:'Recorremos nós', a:n, mine:true, sub:'parte representada ou ambas as partes',
+       line:a => '<b style="color:var(--exito)">'+pct(rRev(a),1)+'</b> dos '+fmt(a[2]+a[3])+' com sentença contra tiveram a decisão mudada'},
+      {t:'Recorreu o adversário ou não consta', a:outros, sub:'inclui os casos sem registro de quem recorreu',
+       line:a => fmt(a[0])+' vitórias de 1º grau mantidas · <b style="color:var(--proc)">'+pct(rContra(a),1)+'</b> perdidas no acórdão'},
+    ];
+    document.getElementById('r-rec').innerHTML = cards.map(c => {
+      const a = c.a, tot = classif(a) || 1;
+      const parts = [[a[2],'var(--exito)'],[a[0]+a[3],'var(--parc)'],[a[1],'var(--proc)']];
+      const bar = parts.map(([v,col])=> v ? '<i style="width:'+(v/tot*100).toFixed(1)+'%;background:'+col+'"></i>' : '').join('');
+      return '<div class="rc'+(c.mine?' mine':'')+'" style="grid-column:span 2"><div class="l">'+c.t+'</div><div class="v">'+fmt(classif(a)+a[4])+' <span>acórdãos</span></div><div class="bar">'+bar+'</div><div class="d">'+(classif(a)?c.line(a):'sem acórdãos')+'</div><div class="s">'+c.sub+'</div></div>';
+    }).join('');
+  }
+
+  function renderCov(){
+    document.getElementById('r-cov').innerHTML = D.cobertura.map(r => {
+      const tot = r.com + r.sem, p = tot ? r.com/tot : 0;
+      const cls = p < .3 ? 'low' : (p < .6 ? 'mid' : '');
+      return '<div class="covrow"><span class="ano">'+r.ano+'</span><span class="covbar '+cls+'"><i style="width:'+(p*100).toFixed(1)+'%"></i></span><span class="covnum"><b>'+pct(p,0)+'</b> · '+fmt(r.com)+'/'+fmt(tot)+'</span></div>';
+    }).join('') + '<p style="margin:10px 0 0;font-size:12px;color:var(--ink-3)">Acórdãos com o inteiro teor gravado no campo <code>acordao</code>. Onde não há texto, o resultado registrado não pode ser conferido contra a decisão.</p>';
+  }
+
+  function heatClass(r, m){ if (r==null) return 'h0'; const t = Math.max(0, Math.min(1, (r-m.lo)/(m.hi-m.lo))); return (m.ramp==='r'?'r':'h')+(1+Math.min(6, Math.floor(t*7))); }
+  function renderTable(id, rows, label){
+    const m = METRICS[metric];
+    const head = '<tr><th>'+label+'</th>'+MESES.slice(0,LAST).map(x=>'<th>'+x+'</th>').join('')+'<th>set*</th><th class="sep">jan–ago 2026</th><th>jan–ago 2025</th></tr>';
+    const body = rows.map(e=>{
+      const src = e[m.src];
+      const cells = MESES.slice(0,LAST).map((_,i)=>{ const a = src['2026'][i]; const r = m.fn(a);
+        return '<td class="heat '+heatClass(r,m)+'" title="'+e.name+' · '+MESES[i]+'/2026">'+pct(r,0)+'<span class="n">'+fmt(m.den(a))+'</span></td>'; }).join('');
+      const s = src['2026'][8];
+      const a26 = sumM(src['2026'],1,LAST), a25 = sumM(src['2025'],1,LAST);
+      return '<tr class="'+(e.total?'total':'')+'"><td title="'+e.name+'">'+e.name+'</td>'+cells+'<td class="dim">'+pct(m.fn(s),0)+'<span class="n">'+fmt(m.den(s))+'</span></td><td class="sep heat '+heatClass(m.fn(a26),m)+'">'+pct(m.fn(a26),1)+'<span class="n">'+fmt(m.den(a26))+'</span></td><td class="dim">'+pct(m.fn(a25),1)+'<span class="n">'+fmt(m.den(a25))+'</span></td></tr>';
+    }).join('');
+    document.getElementById(id).innerHTML = head + body;
+  }
+  const sumP = (key,y) => Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c[key][y][i]),zero()));
+  const allP = { name:'Santander (todos os projetos)', total:true,
+    tot:{'2025':sumP('tot','2025'),'2026':sumP('tot','2026')},
+    nos:{'2025':sumP('nos','2025'),'2026':sumP('nos','2026')} };
+  function renderTables(){
+    mchips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===metric));
+    const m = METRICS[metric];
+    document.getElementById('r-metric-note').textContent = m.note;
+    renderTable('r-t-clients', entities, 'Cliente');
+    renderTable('r-t-projects', [allP, ...D.projects], 'Projeto');
+    const p = m.ramp==='r' ? 'heatr' : 'heat';
+    document.getElementById('r-scale').innerHTML = '<span>'+Math.round(m.lo*100)+'%</span><span class="sw">'+[1,2,3,4,5,6,7].map(i=>'<i style="background:var(--'+p+i+'-bg)"></i>').join('')+'</span><span>'+Math.round(m.hi*100)+'% ou mais</span><span style="margin-left:10px">'+(m.ramp==='r' ? 'vermelho = pior' : 'azul = melhor')+'</span>';
+  }
+  function render(){
+    chips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.textContent===sel));
+    const e = entities.find(x=>x.name===sel) || allClients;
+    document.getElementById('r-t-rate').textContent = 'Reversão recursal por mês · ' + e.name;
+    document.getElementById('r-t-vol').textContent = 'Recursos nossos por mês · ' + e.name;
+    document.getElementById('r-t-rec').textContent = 'Recurso nosso × recurso do adversário · ' + e.name;
+    document.getElementById('r-lg-2025').style.display = cmp ? '' : 'none';
+    renderKpis(e); renderRate(e); renderVol(e); renderRec(e);
+  }
+  renderCov(); renderTables(); render();
+})();
+</script>
+
+<div class="panel" id="panel-atuacao" hidden>
+  <header>
+    <div>
+      <h2 class="ptitle">Onde atuar</h2>
+      <p class="sub">Taxa baixa em lugar pequeno é ruído; taxa baixa em lugar grande é dinheiro. Esta aba ordena os recortes por <b>quantos casos há a ganhar</b> — o volume multiplicado pela distância até o desempenho do restante da carteira.</p>
+    </div>
+    <div class="meta">Dados do MMP em <b id="a-asof"></b><br>Período: <b id="a-periodo"></b> (meses fechados)<br>Uma linha por caso, sem recorte mensal</div>
+  </header>
+
+  <div class="def-strip">
+    <b>Como o potencial é calculado.</b> Para cada recorte comparamos a taxa dele com a taxa de <b>todo o resto</b> daquele mesmo corte (mesma métrica, mesmo cliente). Se está abaixo, o potencial é <code>(taxa do resto − taxa do recorte) × volume do recorte</code>: os casos que teriam saído diferente se ali o desempenho fosse o do restante. Recortes acima da média aparecem com potencial zero — não há o que recuperar.
+  </div>
+
+  <div class="ask">
+    <div class="askbar">
+      <span class="askicon" aria-hidden="true">?</span>
+      <input id="a-q" type="text" autocomplete="off" placeholder="Pergunte: onde perco mais em reversão no Santander? · como estamos em Pernambuco? · pior comarca no consignado">
+      <button class="mic" id="a-mic" type="button" title="Falar a pergunta" hidden><span aria-hidden="true">🎙</span><span class="sr">Falar a pergunta</span></button>
+      <button class="askgo" id="a-go" type="button">Consultar</button>
+    </div>
+    <div class="askhint" id="a-hint">A pergunta só ajusta os filtros — os números saem sempre do cálculo feito aqui, sobre os dados da página. Entende nomes de cliente, projeto do Santander, UF, comarca e tipo de ação, e as palavras <i>reversão</i>, <i>êxito</i>, <i>pior</i>, <i>onde</i>.</div>
+    <div class="askout" id="a-out" hidden></div>
+  </div>
+
+  <div class="controls">
+    <span class="eyebrow">Métrica</span>
+    <div class="chips" id="a-metrica" role="group" aria-label="Métrica"></div>
+    <span class="eyebrow" style="margin-left:8px">Recorte</span>
+    <div class="chips" id="a-dim" role="group" aria-label="Dimensão"></div>
+    <div class="chips" id="a-uf-filtro" aria-label="Filtro de UF" hidden></div>
+  </div>
+  <div class="controls" style="margin-top:-8px">
+    <span class="eyebrow">Cliente</span>
+    <div class="chips" id="a-cli" role="group" aria-label="Cliente"></div>
+  </div>
+  <div class="controls" id="a-proj-linha" style="margin-top:-8px" hidden>
+    <span class="eyebrow">Projeto</span>
+    <div class="chips" id="a-proj" role="group" aria-label="Projeto"></div>
+  </div>
+
+  <div class="kpis kpis4" id="a-kpis"></div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="h">
+      <h2 id="a-t-scatter">Volume × desempenho</h2>
+      <span class="note">cada bolha é um recorte · o tamanho é o potencial · linha tracejada = média do recorte selecionado</span>
+    </div>
+    <div class="chart" id="a-scatter"></div>
+    <div class="legend">
+      <span><i style="background:var(--proc)"></i>abaixo da média — quanto mais à direita, mais casos em jogo</span>
+      <span><i style="background:var(--exito)"></i>acima da média</span>
+      <span class="note" id="a-scatter-note"></span>
+    </div>
+  </div>
+
+  <div class="section" style="align-items:center">
+    <h2 id="a-t-rank">Onde atuar primeiro</h2>
+    <span class="note">Ordenado por casos a ganhar. Sob cada taxa vai o intervalo de confiança de 95%: quando é largo, o número é amostra pequena e não conclusão.</span>
+  </div>
+  <div class="tablewrap"><table id="a-t-tabela"></table></div>
+  <p class="note" id="a-rodape" style="margin:8px 0 0;font-size:12px;color:var(--ink-3)"></p>
+
+  <div class="defs">
+    <h3>Como os números são calculados</h3>
+    <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) no período fechado, agrupado por UF (<code>estado_id</code>), comarca (<code>comarca_id</code>) ou tipo de ação (<code>tipo_acao_id</code>), cruzado com o cliente (<code>grupo_id</code>). Inclui casos arquivados. Sem recorte mensal: o período inteiro entra numa conta só, para dar volume às células menores.</p>
+    <p><b>Projeto (só no Santander):</b> escolhido o Santander, aparece uma segunda linha de filtros com os projetos do caso (<code>projeto_id</code>) — Consignado, Revisionais, Indenizatórias e assim por diante. Os projetos com pouco movimento entram somados em <span class="tag">Outros projetos</span>, e a soma de todos reproduz exatamente o número do Santander. Com um projeto selecionado, tudo na aba passa a ser calculado dentro dele: a taxa, o benchmark (os demais recortes <i>do mesmo projeto</i>) e o potencial.</p>
+    <p><b>Reversão recursal:</b> denominador = acórdãos em que <b>nós</b> recorremos de sentença desfavorável; numerador = os que mudaram a decisão a nosso favor. Mesma definição da aba de reversão. <b>Êxito em sentença:</b> denominador = sentenças com tipo informado; numerador = improcedentes + extinções. Mesma definição da aba de sentenças.</p>
+    <p><b>Benchmark:</b> a taxa de todos os <i>outros</i> recortes da mesma dimensão e do mesmo cliente — nunca a média que inclui o próprio recorte. Sem isso, São Paulo (que sozinho é 44% dos recursos) seria comparado consigo mesmo e nunca apareceria como oportunidade.</p>
+    <p><b>Intervalo de confiança:</b> Wilson, 95%. Com 4 casos a faixa passa de 40 pontos percentuais — é o aviso de que ali não há conclusão possível, só ruído. Recortes com menos de 10 casos no denominador vêm marcados como <span class="tag">amostra pequena</span>.</p>
+    <p><b>A pergunta em linguagem natural</b> é interpretada pela própria página, sem enviar nada para fora: ela reconhece os nomes de cliente, projeto do Santander, UF, comarca e tipo de ação que existem nos dados, e as palavras "reversão", "êxito", "comarca", "pior" e "onde". Citar um projeto ("como está a reversão no consignado?") já troca o cliente para Santander e aplica o filtro. O que ela faz é ajustar os filtros e destacar o recorte citado — os números vêm sempre do cálculo local, nunca de um texto gerado. O ditado por voz usa o reconhecimento do próprio navegador (Chrome e Edge) e o botão de microfone só aparece onde ele existe.</p>
+  </div>
+</div>
+
+<script id="a-data" type="application/json">__ADATA__</script>
+<script>
+(function(){
+  const D = JSON.parse(document.getElementById('a-data').textContent);
+  const fmt = n => Math.round(n).toLocaleString('pt-BR');
+  const fmt1 = n => n.toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1});
+  const pct = (r, d=1) => r==null ? '–' : (r*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+  document.getElementById('a-asof').textContent = D.asOf;
+  document.getElementById('a-periodo').textContent = D.periodo;
+
+  const METRICAS = {
+    rev: {
+      label:'Reversão recursal',
+      den: c => c.n[2] + c.n[3],
+      num: c => c.n[2],
+      unidade:'recursos nossos',
+      ganho:'reversões a mais',
+      alvo:'recursos nossos com sentença desfavorável',
+    },
+    exito: {
+      label:'Êxito em sentença',
+      den: c => c.s[0]+c.s[1]+c.s[2]+c.s[3]+c.s[4],
+      num: c => c.s[0]+c.s[1],
+      unidade:'sentenças',
+      ganho:'sentenças favoráveis a mais',
+      alvo:'sentenças com tipo informado',
+    },
+  };
+  const PISO_AMOSTRA = 10;      // abaixo disto, marca como amostra pequena
+  const MAX_LINHAS = 25;        // linhas no ranking
+  const MIN_BOLHA = 5;          // denominador mínimo para entrar no gráfico
+  const MAX_BOLHAS = 120;
+
+  const TODOS_PROJ = 'Todos os projetos';
+  const CLI_PROJ = D.clienteComProjeto || null;            // só este cliente tem quebra por projeto
+  const PROJETOS = D.projetos || [];
+  let metrica = 'rev', dimensao = 'uf', cliente = 'Todos', filtroUF = null, projeto = TODOS_PROJ;
+  const CLIENTES = ['Todos', ...D.clientes];
+
+  const temProjeto = () => !!(CLI_PROJ && PROJETOS.length && cliente === CLI_PROJ);
+  const projetoAtivo = () => temProjeto() && projeto !== TODOS_PROJ && PROJETOS.indexOf(projeto) >= 0;
+  const rotuloCliente = () => projetoAtivo() ? `${cliente} · ${projeto}` : cliente;
+
+  // ---- chips ----
+  function chips(id, itens, atual, aoEscolher){
+    const box = document.getElementById(id);
+    box.innerHTML = '';
+    itens.forEach(([valor, rotulo]) => {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.textContent = rotulo;
+      b.setAttribute('aria-pressed', valor === atual);
+      b.addEventListener('click', () => aoEscolher(valor));
+      box.appendChild(b);
+    });
+  }
+  function pintarChips(){
+    chips('a-metrica', Object.entries(METRICAS).map(([k,m]) => [k, m.label]), metrica,
+          v => { metrica = v; render(); });
+    chips('a-dim', Object.entries(D.dims).map(([k,d]) => [k, d.label]), dimensao,
+          v => { dimensao = v; render(); });
+    chips('a-cli', CLIENTES.map(c => [c, c]), cliente,
+          v => { cliente = v; if (cliente !== CLI_PROJ) projeto = TODOS_PROJ; render(); });
+    const linhaProj = document.getElementById('a-proj-linha');
+    if (temProjeto()) {
+      linhaProj.hidden = false;
+      chips('a-proj', [TODOS_PROJ, ...PROJETOS].map(p => [p, p]), projeto,
+            v => { projeto = v; render(); });
+    } else {
+      linhaProj.hidden = true;
+      document.getElementById('a-proj').innerHTML = '';
+    }
+    const box = document.getElementById('a-uf-filtro');
+    if (filtroUF && dimensao !== 'uf') {
+      const nome = (D.dims.uf.itens.find(i => i.k === filtroUF) || {}).n || filtroUF;
+      box.hidden = false;
+      box.innerHTML = `<button class="chip chipx" type="button" title="Remover o filtro de UF">${nome} <span aria-hidden="true">×</span></button>`;
+      box.querySelector('button').addEventListener('click', () => { filtroUF = null; render(); });
+    } else { box.hidden = true; box.innerHTML = ''; }
+  }
+
+  // ---- agregação ----
+  function celulas(){
+    // com projeto selecionado a conta sai de item.p (só o Santander tem essa quebra)
+    const porProjeto = projetoAtivo();
+    const alvo = porProjeto ? PROJETOS.indexOf(projeto)
+                            : (cliente === 'Todos' ? null : D.clientes.indexOf(cliente));
+    const M = METRICAS[metrica];
+    const saida = [];
+    for (const item of D.dims[dimensao].itens) {
+      if (filtroUF && dimensao !== 'uf' && item.uf !== filtroUF) continue;
+      const acc = {s:[0,0,0,0,0,0], t:[0,0,0,0,0], n:[0,0,0,0,0]};
+      for (const [cli, s, t, n] of (porProjeto ? (item.p || []) : item.c)) {
+        if (alvo !== null && cli !== alvo) continue;
+        if (s) for (let i=0;i<6;i++) acc.s[i] += s[i];
+        if (t) for (let i=0;i<5;i++) acc.t[i] += t[i];
+        if (n) for (let i=0;i<5;i++) acc.n[i] += n[i];
+      }
+      const den = M.den(acc), num = M.num(acc);
+      if (!den) continue;
+      saida.push({chave:item.k, nome:item.n || item.k, uf:item.uf || (dimensao==='uf' ? item.k : ''), den, num});
+    }
+    const totalDen = saida.reduce((s,c)=>s+c.den, 0);
+    const totalNum = saida.reduce((s,c)=>s+c.num, 0);
+    for (const c of saida) {
+      c.taxa = c.num / c.den;
+      const restoDen = totalDen - c.den, restoNum = totalNum - c.num;
+      c.bench = restoDen ? restoNum / restoDen : null;
+      c.gap = c.bench == null ? 0 : c.bench - c.taxa;
+      c.potencial = c.gap > 0 ? c.gap * c.den : 0;
+      c.ic = wilson(c.num, c.den);
+    }
+    return {celulas: saida, totalDen, totalNum, taxa: totalDen ? totalNum/totalDen : null};
+  }
+
+  function wilson(k, n, z){
+    z = z || 1.96;
+    if (!n) return null;
+    const p = k/n, d = 1 + z*z/n;
+    const centro = (p + z*z/(2*n)) / d;
+    const margem = z * Math.sqrt(p*(1-p)/n + z*z/(4*n*n)) / d;
+    return [Math.max(0, centro-margem), Math.min(1, centro+margem)];
+  }
+
+  // ---- KPIs ----
+  function renderKpis(dados){
+    const M = METRICAS[metrica];
+    const abaixo = dados.celulas.filter(c => c.potencial > 0);
+    const potencialTotal = abaixo.reduce((s,c)=>s+c.potencial, 0);
+    const top = [...abaixo].sort((a,b)=>b.potencial-a.potencial)[0];
+    const concentracao = potencialTotal && top ? top.potencial/potencialTotal : 0;
+    const k = [
+      {l:`${M.label} · ${rotuloCliente()}`, v:pct(dados.taxa), d:`${fmt(dados.totalNum)} de ${fmt(dados.totalDen)} ${M.alvo}`},
+      {l:'Casos a ganhar', v:fmt(potencialTotal), hero:true,
+       d:`${M.ganho} se cada recorte abaixo da média alcançasse o restante`},
+      {l:'Recortes abaixo da média', v:`${abaixo.length}`,
+       d:`de ${dados.celulas.length} com movimento no período`},
+      {l:'Maior oportunidade', v: top ? top.nome : '–',
+       d: top ? `${fmt(top.potencial)} casos · ${pct(top.taxa)} em ${fmt(top.den)} · ${pct(concentracao,0)} de todo o potencial`
+              : (dados.celulas.length <= 1 ? 'recorte único: não há comparação possível' : 'nada abaixo da média')},
+    ];
+    document.getElementById('a-kpis').innerHTML = k.map(x =>
+      `<div class="kpi${x.hero?' hero':''}"><div class="l">${x.l}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
+  }
+
+  // ---- dispersão ----
+  function tipFor(c){ let t = c.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className='tip'; c.appendChild(t);} return t; }
+  function showTip(c, html, x, y){ const t = tipFor(c); t.innerHTML = html; t.classList.add('on');
+    const w = c.clientWidth, tw = t.offsetWidth; let left = x + 14; if (left + tw > w) left = x - tw - 14;
+    t.style.left = Math.max(0,left)+'px'; t.style.top = Math.max(0, y - 10)+'px'; }
+  function hideTip(c){ const t = c.querySelector('.tip'); if (t) t.classList.remove('on'); }
+
+  function renderScatter(dados, destaque){
+    const M = METRICAS[metrica];
+    const c = document.getElementById('a-scatter');
+    let pontos = dados.celulas.filter(p => p.den >= MIN_BOLHA)
+                              .sort((a,b)=>b.den-a.den).slice(0, MAX_BOLHAS);
+    const nota = document.getElementById('a-scatter-note');
+    const fora = dados.celulas.length - pontos.length;
+    nota.textContent = fora > 0 ? `${fora} recorte(s) com menos de ${MIN_BOLHA} ${M.unidade} fora do gráfico` : '';
+    if (!pontos.length) { c.innerHTML = '<p class="note" style="padding:20px 0">Sem volume suficiente para o gráfico neste recorte.</p>'; return; }
+
+    const W = 1040, H = 380, P = {l:48, r:24, t:18, b:44};
+    const iw = W-P.l-P.r, ih = H-P.t-P.b;
+    const maxDen = Math.max(...pontos.map(p=>p.den));
+    const lx = v => Math.log10(Math.max(1, v));
+    const maxX = Math.ceil(lx(maxDen) * 2) / 2;
+    const xs = v => P.l + iw * (lx(v) / (maxX || 1));
+    const maxTaxa = Math.min(1, Math.max(0.4, Math.ceil((Math.max(...pontos.map(p=>p.taxa)) + 0.05) * 10) / 10));
+    const ys = r => P.t + ih * (1 - r / maxTaxa);
+    const maxPot = Math.max(1, ...pontos.map(p=>p.potencial));
+    const raio = p => 4 + 18 * Math.sqrt(p.potencial / maxPot);
+
+    const ticksY = [0, .25, .5, .75, 1].map(t => t * maxTaxa);
+    const ticksX = [];
+    for (let e = 0; e <= maxX + 0.001; e += 1) ticksX.push(Math.pow(10, e));
+
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Volume por desempenho, ${M.label}, ${rotuloCliente()}">`;
+    g += '<g class="grid">' + ticksY.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t).toFixed(1)}" y2="${ys(t).toFixed(1)}"/>`).join('') + '</g>';
+    g += ticksY.map(t=>`<text x="${P.l-8}" y="${(ys(t)+4).toFixed(1)}" text-anchor="end">${Math.round(t*100)}%</text>`).join('');
+    g += ticksX.map(v=>`<text x="${xs(v).toFixed(1)}" y="${H-24}" text-anchor="middle">${fmt(v)}</text>`).join('');
+    g += `<text x="${(P.l+iw/2).toFixed(0)}" y="${H-6}" text-anchor="middle" style="font-weight:700">${M.alvo} no período (escala logarítmica)</text>`;
+    if (dados.taxa != null) {
+      g += `<line x1="${P.l}" x2="${W-P.r}" y1="${ys(dados.taxa).toFixed(1)}" y2="${ys(dados.taxa).toFixed(1)}" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+      g += `<text x="${P.l+6}" y="${(ys(dados.taxa)-7).toFixed(1)}" text-anchor="start" style="fill:var(--ink-2);font-weight:700">média ${pct(dados.taxa,0)}</text>`;
+    }
+    const ordenados = [...pontos].sort((a,b)=>b.potencial-a.potencial);
+    const rotular = new Set(ordenados.slice(0,5).map(p=>p.chave));
+    const postos = [];   // rótulos já colocados, para desviar de colisão
+    for (const p of pontos) {
+      const cor = p.potencial > 0 ? 'var(--proc)' : 'var(--exito)';
+      const destacado = destaque && p.chave === destaque;
+      const cx = xs(p.den), cy = ys(p.taxa), r = raio(p);
+      g += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}"
+            fill="${cor}" fill-opacity="${destacado?0.75:0.4}" stroke="${destacado?'var(--ink)':cor}"
+            stroke-width="${destacado?2.5:1.5}" data-k="${encodeURIComponent(p.chave)}"/>`;
+      if (!(rotular.has(p.chave) || destacado)) continue;
+      const texto = p.nome.length > 18 ? p.nome.slice(0,17) + '…' : p.nome;
+      const largura = texto.length * 5.6;
+      let ly = cy - r - 6, ancora = 'middle', lx = cx;
+      if (lx + largura/2 > W - P.r) { ancora = 'end'; lx = cx - r - 4; ly = cy + 4; }
+      else if (lx - largura/2 < P.l) { ancora = 'start'; lx = cx + r + 4; ly = cy + 4; }
+      let tentativas = 0;
+      while (postos.some(q => Math.abs(q.x - lx) < (q.w + largura)/2 && Math.abs(q.y - ly) < 13) && tentativas < 3) {
+        ly = tentativas % 2 === 0 ? cy + r + 13 : cy - r - 6 - 13 * (tentativas);
+        tentativas++;
+      }
+      postos.push({x: lx, y: ly, w: largura});
+      g += `<text class="lbl" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${ancora}">${texto}</text>`;
+    }
+    g += '</svg>';
+    c.innerHTML = g;
+    const svg = c.querySelector('svg');
+    svg.querySelectorAll('circle').forEach(el => {
+      el.addEventListener('mousemove', ev => {
+        const p = pontos.find(x => x.chave === decodeURIComponent(el.getAttribute('data-k')));
+        const r = svg.getBoundingClientRect();
+        showTip(c, cartaoHTML(p, true), ev.clientX-r.left, ev.clientY-r.top);
+      });
+      el.addEventListener('mouseleave', ()=>hideTip(c));
+    });
+  }
+
+  function cartaoHTML(p, curto){
+    const M = METRICAS[metrica];
+    let html = `<b>${p.nome}</b>${p.uf && p.uf !== p.chave ? ' · '+p.uf : ''}`
+      + `<div class="row"><span>${M.label}</span><b>${pct(p.taxa)}</b></div>`
+      + `<div class="row"><span>${M.alvo}</span><span>${fmt(p.den)}</span></div>`;
+    if (p.bench != null) html += `<div class="row"><span>demais recortes</span><span>${pct(p.bench)}</span></div>`;
+    if (p.potencial > 0) html += `<div class="row"><span>casos a ganhar</span><b style="color:var(--proc)">${fmt(p.potencial)}</b></div>`;
+    else html += `<div class="row"><span>acima da média</span><span>—</span></div>`;
+    if (!curto && p.ic) html += `<div class="row"><span>faixa de confiança</span><span>${pct(p.ic[0],0)} a ${pct(p.ic[1],0)}</span></div>`;
+    return html;
+  }
+
+  // ---- tabela ----
+  function renderTabela(dados, destaque){
+    const M = METRICAS[metrica];
+    const ordenados = [...dados.celulas].sort((a,b) => b.potencial - a.potencial || b.den - a.den);
+    const mostrar = ordenados.slice(0, MAX_LINHAS);
+    const rot = D.dims[dimensao].label;
+    const head = `<tr><th>${rot}</th><th title="${M.alvo}">volume</th>`
+      + `<th title="${M.label} — abaixo, a faixa de confiança de 95%">${M.label}</th>`
+      + `<th>demais recortes</th><th>diferença</th><th class="sep">casos a ganhar</th></tr>`;
+    const linhas = mostrar.map(p => {
+      const pequena = p.den < PISO_AMOSTRA;
+      const barra = p.potencial > 0
+        ? `<span class="potbar"><i style="width:${Math.min(100, p.potencial / Math.max(1, ordenados[0].potencial) * 100).toFixed(1)}%"></i></span>`
+        : '';
+      return `<tr class="${destaque && p.chave===destaque ? 'mark' : ''}">`
+        + `<td title="${p.nome}">${p.nome}${p.uf && p.uf !== p.chave ? ` <span class="ufbadge">${p.uf}</span>` : ''}`
+        + (pequena ? ' <span class="tag">amostra pequena</span>' : '') + '</td>'
+        + `<td>${fmt(p.den)}</td>`
+        + `<td class="${p.gap > 0 ? 'ruim' : 'bom'}">${pct(p.taxa)}`
+        + `<span class="n" title="intervalo de confiança de 95%">${p.ic ? pct(p.ic[0],0)+'–'+pct(p.ic[1],0) : ''}</span></td>`
+        + `<td class="dim">${pct(p.bench)}</td>`
+        + `<td class="${p.gap > 0 ? 'ruim' : 'bom'}">${p.gap > 0 ? '−' : '+'}${fmt1(Math.abs(p.gap)*100)} p.p.</td>`
+        + `<td class="sep"><b>${p.potencial > 0 ? fmt(p.potencial) : '–'}</b>${barra}</td></tr>`;
+    }).join('');
+    document.getElementById('a-t-tabela').innerHTML = head + linhas;
+    const restantes = ordenados.length - mostrar.length;
+    document.getElementById('a-rodape').textContent = restantes > 0
+      ? `Mostrando os ${mostrar.length} recortes de maior potencial; outros ${fmt(restantes)} ficaram de fora da lista (continuam somados nos indicadores).`
+      : `Todos os ${ordenados.length} recortes com movimento no período estão na lista.`;
+  }
+
+  // ---- consulta ----
+  const SIGLAS = {};
+  for (const item of (D.dims.uf ? D.dims.uf.itens : [])) SIGLAS[item.k] = item.n || item.k;
+
+  function normalizar(s){
+    return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  }
+  // texto sem acento, sem pontua\u00e7\u00e3o e com espa\u00e7os simples \u2014 para casar nomes compostos
+  function achatar(s){ return normalizar(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim(); }
+
+  // apelidos de projeto: o nome inteiro e, quando o peda\u00e7o s\u00f3 aparece num projeto, o peda\u00e7o solto
+  const ALIAS_PROJ = (() => {
+    const vezes = {};
+    for (const p of PROJETOS) for (const pedaco of p.split(' - ')) {
+      const a = achatar(pedaco);
+      if (a.length >= 5) vezes[a] = (vezes[a] || 0) + 1;
+    }
+    const lista = [];
+    for (const p of PROJETOS) {
+      if (p === 'Outros projetos') continue;
+      const nomes = new Set([achatar(p)]);
+      for (const pedaco of p.split(' - ')) {
+        const a = achatar(pedaco);
+        if (a.length >= 5 && vezes[a] === 1) nomes.add(a);
+      }
+      for (const a of nomes) if (a) lista.push([a, p]);
+    }
+    return lista.sort((x, y) => y[0].length - x[0].length);   // o apelido mais espec\u00edfico primeiro
+  })();
+
+  function interpretarLocal(texto){
+    const t = normalizar(texto);
+    const r = {};
+    if (/\bexito|sentenc|improced|primeiro grau|1o grau\b/.test(t)) r.metrica = 'exito';
+    if (/\brevers|recurs|acordao|segundo grau|2o grau\b/.test(t)) r.metrica = 'rev';
+    if (/\bcomarca|cidade|municipio\b/.test(t)) r.dimensao = 'comarca';
+    if (/\btese|tipo de acao|materia|assunto\b/.test(t)) r.dimensao = 'tese';
+    if (/\buf|estado|regiao|geografi\b/.test(t)) r.dimensao = 'uf';
+    for (const c of D.clientes) if (t.includes(normalizar(c))) r.cliente = c;
+    if (/\btodos os clientes|carteira toda|geral\b/.test(t)) r.cliente = 'Todos';
+    const clienteCitado = !!r.cliente;
+    // projeto citado: puxa o cliente que tem a quebra junto, senão o filtro não teria efeito
+    if (CLI_PROJ && (!r.cliente || r.cliente === CLI_PROJ)) {
+      const tp = ' ' + achatar(texto) + ' ';
+      for (const [apelido, nome] of ALIAS_PROJ) {
+        if (tp.includes(' ' + apelido + ' ')) {
+          r.projeto = nome; r.cliente = CLI_PROJ;
+          r.explicacao = `projeto ${nome}, dentro do cliente ${CLI_PROJ}`;
+          break;
+        }
+      }
+    }
+    // citar o cliente sem citar projeto tira um filtro de projeto que tenha ficado da pergunta anterior
+    if (clienteCitado && !r.projeto) r.projeto = TODOS_PROJ;
+    if (/\btodos os projetos|projeto nenhum|sem projeto\b/.test(t)) { r.projeto = TODOS_PROJ; r.explicacao = null; }
+    // se a pergunta cita uma UF, guarda: vira foco (dimensão UF) ou filtro (comarca)
+    let ufCitada = null;
+    for (const item of (D.dims.uf ? D.dims.uf.itens : [])) {
+      const nome = normalizar(item.n || item.k);
+      if (t.includes(nome) || new RegExp('\\b' + normalizar(item.k) + '\\b').test(t)) { ufCitada = item.k; break; }
+    }
+    // procura o recorte citado, começando pela dimensão que a pergunta pediu
+    const ordem = r.dimensao ? [r.dimensao, ...Object.keys(D.dims).filter(d => d !== r.dimensao)]
+                             : Object.keys(D.dims);
+    // o que já virou projeto não deve virar também recorte (há tese com o mesmo nome do projeto)
+    const usadoNoProjeto = new Set(
+      r.projeto ? ALIAS_PROJ.filter(([, nome]) => nome === r.projeto).map(([a]) => a) : []);
+    for (const dim of ordem) {
+      if (dim === 'uf' && r.dimensao && r.dimensao !== 'uf') continue;
+      for (const item of D.dims[dim].itens) {
+        const nome = normalizar(item.n || item.k);
+        if (nome.length < 3) continue;
+        if (usadoNoProjeto.has(achatar(item.n || item.k))) continue;
+        if (t.includes(nome) || (dim === 'uf' && new RegExp('\\b' + normalizar(item.k) + '\\b').test(t))) {
+          r.foco = item.k; r.dimensao = dim; break;
+        }
+      }
+      if (r.foco) break;
+    }
+    if (ufCitada && r.dimensao && r.dimensao !== 'uf') { r.filtro_uf = ufCitada; if (r.foco === ufCitada) r.foco = null; }
+    return r;
+  }
+
+  async function interpretarComClaude(texto){
+    let sample = null;
+    try { sample = await claude.use('sample'); } catch (e) { sample = null; }
+    if (!sample) return null;
+    const ufs = D.dims.uf ? D.dims.uf.itens.map(i => `${i.k} (${i.n})`).join(', ') : '';
+    const prompt = [
+      'Você interpreta perguntas sobre um painel jurídico e devolve APENAS filtros. Nunca invente números.',
+      'Responda um JSON com as chaves: metrica ("rev" para reversão recursal em 2º grau, "exito" para êxito em sentença de 1º grau),',
+      'dimensao ("uf", "comarca" ou "tese"), cliente (um de: Todos, ' + D.clientes.join(', ') + '),',
+      'foco (a sigla da UF, ou o nome exato da comarca ou do tipo de ação citado, ou null se a pergunta for geral),',
+      'filtro_uf (sigla da UF quando a pergunta restringe comarcas a um estado, como "comarca de São Paulo"; senão null),',
+      'projeto (só faz sentido no cliente ' + (CLI_PROJ || '—') + '; um de: ' + PROJETOS.join(', ') + '; senão null),',
+      'e explicacao (uma frase curta em português dizendo o que você entendeu).',
+      'UFs válidas: ' + ufs + '.',
+      'Se a pergunta não indicar algo, use null naquela chave.',
+      'Pergunta: ' + texto,
+    ].join('\n');
+    try {
+      const r = await sample.json(prompt, {modelTier:'quick', cache:false});
+      return r && typeof r === 'object' ? r : null;
+    } catch (e) { return null; }
+  }
+
+  function aplicar(filtro){
+    if (!filtro) return null;
+    if (filtro.metrica && METRICAS[filtro.metrica]) metrica = filtro.metrica;
+    if (filtro.dimensao && D.dims[filtro.dimensao]) dimensao = filtro.dimensao;
+    if (filtro.cliente && CLIENTES.includes(filtro.cliente)) cliente = filtro.cliente;
+    if (CLI_PROJ) {
+      if (filtro.projeto && PROJETOS.includes(filtro.projeto)) { projeto = filtro.projeto; cliente = CLI_PROJ; }
+      else if (filtro.projeto === TODOS_PROJ) projeto = TODOS_PROJ;
+      if (cliente !== CLI_PROJ) projeto = TODOS_PROJ;
+    }
+    filtroUF = null;
+    if (filtro.filtro_uf) {
+      const alvoUF = normalizar(filtro.filtro_uf);
+      const achado = (D.dims.uf ? D.dims.uf.itens : []).find(
+        i => normalizar(i.k) === alvoUF || normalizar(i.n || '') === alvoUF);
+      if (achado && dimensao !== 'uf') filtroUF = achado.k;
+    }
+    let foco = null;
+    if (filtro.foco) {
+      const alvo = normalizar(filtro.foco);
+      // a dimensão já escolhida tem prioridade: "comarca de São Paulo" é a comarca, não a UF
+      const ordem = [dimensao, ...Object.keys(D.dims).filter(d => d !== dimensao)];
+      for (const dim of ordem) {
+        const achado = D.dims[dim].itens.find(
+          i => normalizar(i.k) === alvo || normalizar(i.n || '') === alvo);
+        if (achado) { dimensao = dim; foco = achado.k; break; }
+      }
+      if (foco && dimensao === 'uf') filtroUF = null;
+    }
+    return foco;
+  }
+
+  function responder(dados, foco, explicacao, viaClaude){
+    const out = document.getElementById('a-out');
+    const M = METRICAS[metrica];
+    let html = '';
+    if (explicacao) html += `<div class="askread">${viaClaude ? 'Entendi' : 'Li'}: ${explicacao}</div>`;
+    if (foco) {
+      const p = dados.celulas.find(c => c.chave === foco);
+      if (!p) {
+        const item = D.dims[dimensao].itens.find(i => i.k === foco);
+        const nome = item ? (item.n || item.k) : foco;
+        html += `<p class="askvazio">Não há <b>${nome}</b> no período`
+          + (cliente !== 'Todos' ? ` dentro de <b>${rotuloCliente()}</b>` : '')
+          + `, nesta métrica.`
+          + (projetoAtivo() ? ` <button type="button" class="linkbtn" id="a-limpar-proj">Ver em todos os projetos do ${cliente}</button>` : '')
+          + (cliente !== 'Todos' ? ` <button type="button" class="linkbtn" id="a-limpar">Ver em todos os clientes</button>` : '')
+          + `</p>`;
+      } else {
+        const posicao = [...dados.celulas].sort((a,b)=>b.potencial-a.potencial).findIndex(c=>c.chave===foco) + 1;
+        const pequena = p.den < PISO_AMOSTRA;
+        html += `<div class="askcard"><div class="askcard-h">${p.nome}${p.uf && p.uf!==p.chave ? ' · '+p.uf : ''} · ${rotuloCliente()}</div>`
+          + `<div class="askcard-v">${pct(p.taxa)}<span> de ${M.label.toLowerCase()} em ${fmt(p.den)} ${M.alvo}</span></div>`
+          + `<p>Os demais recortes somam <b>${pct(p.bench)}</b>. `
+          + (p.potencial > 0
+              ? `Alcançar esse patamar aqui significaria <b>${fmt(p.potencial)} ${M.ganho}</b> no período — ${posicao}º maior potencial da lista.`
+              : `Este recorte está <b>acima</b> da média: não há casos a recuperar aqui.`)
+          + `</p><p class="askic">Faixa de confiança de 95%: ${pct(p.ic[0],0)} a ${pct(p.ic[1],0)}.`
+          + (pequena ? ` Com ${fmt(p.den)} casos, a faixa é larga demais para tratar como tendência — é volume baixo, não desempenho ruim comprovado.` : '')
+          + `</p></div>`;
+      }
+    } else {
+      const top = [...dados.celulas].sort((a,b)=>b.potencial-a.potencial).filter(c=>c.potencial>0).slice(0,3);
+      if (top.length) {
+        html += `<div class="askcard"><div class="askcard-h">Maiores oportunidades · ${M.label} · ${rotuloCliente()}</div><ol class="asklista">`
+          + top.map(p => `<li><b>${p.nome}</b> — ${pct(p.taxa)} em ${fmt(p.den)} ${M.alvo}, contra ${pct(p.bench)} no resto: <b>${fmt(p.potencial)} ${M.ganho}</b></li>`).join('')
+          + `</ol></div>`;
+      } else if (!dados.celulas.length) {
+        html += `<p class="askvazio">Não há ${M.alvo} em <b>${rotuloCliente()}</b> no período.`
+          + (projetoAtivo() ? ` <button type="button" class="linkbtn" id="a-limpar-proj">Ver em todos os projetos do ${cliente}</button>` : '')
+          + `</p>`;
+      } else if (dados.celulas.length === 1) {
+        const unico = dados.celulas[0];
+        html += `<p class="askvazio">Neste corte há um único recorte`
+          + ` (<b>${unico.nome}</b>, ${pct(unico.taxa)} em ${fmt(unico.den)} ${M.alvo})`
+          + `, então não há com o que comparar. Troque o recorte para UF ou comarca.</p>`;
+      } else {
+        html += `<p class="askvazio">Nenhum recorte abaixo da média neste corte — todos estão no mesmo patamar ou acima.</p>`;
+      }
+    }
+    out.innerHTML = html;
+    out.hidden = false;
+    const refazer = () => {
+      pintarChips(); pintarTitulos();
+      const novos = celulas();
+      renderKpis(novos); renderScatter(novos, foco); renderTabela(novos, foco);
+      responder(novos, foco, explicacao, viaClaude);
+    };
+    const limparProj = document.getElementById('a-limpar-proj');
+    if (limparProj) limparProj.addEventListener('click', () => { projeto = TODOS_PROJ; refazer(); });
+    const limpar = document.getElementById('a-limpar');
+    if (limpar) limpar.addEventListener('click', () => {
+      cliente = 'Todos'; projeto = TODOS_PROJ;
+      refazer();
+    });
+  }
+
+  async function consultar(){
+    const texto = document.getElementById('a-q').value.trim();
+    if (!texto) return;
+    const botao = document.getElementById('a-go');
+    botao.disabled = true; botao.textContent = 'Consultando…';
+    let filtro = await interpretarComClaude(texto);
+    let viaClaude = !!filtro;
+    if (!filtro) filtro = interpretarLocal(texto);
+    const foco = aplicar(filtro);
+    pintarChips(); pintarTitulos();
+    const dados = celulas();
+    renderKpis(dados); renderScatter(dados, foco); renderTabela(dados, foco);
+    responder(dados, foco, filtro.explicacao || null, viaClaude);
+    botao.disabled = false; botao.textContent = 'Consultar';
+  }
+
+  document.getElementById('a-go').addEventListener('click', consultar);
+  document.getElementById('a-q').addEventListener('keydown', ev => { if (ev.key === 'Enter') consultar(); });
+
+  // ---- ditado por voz (só onde o navegador oferece) ----
+  const Reconhecimento = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (Reconhecimento) {
+    const mic = document.getElementById('a-mic');
+    mic.hidden = false;
+    let ouvindo = false, rec = null;
+    mic.addEventListener('click', () => {
+      if (ouvindo && rec) { rec.stop(); return; }
+      try {
+        rec = new Reconhecimento();
+        rec.lang = 'pt-BR'; rec.interimResults = true; rec.continuous = false;
+        rec.onstart = () => { ouvindo = true; mic.classList.add('on'); document.getElementById('a-hint').textContent = 'Ouvindo… fale a pergunta.'; };
+        rec.onresult = ev => {
+          const texto = Array.from(ev.results).map(r => r[0].transcript).join('');
+          document.getElementById('a-q').value = texto;
+          if (ev.results[ev.results.length-1].isFinal) { rec.stop(); consultar(); }
+        };
+        rec.onerror = () => { document.getElementById('a-hint').textContent = 'Não consegui ouvir. Verifique a permissão do microfone e tente de novo, ou digite a pergunta.'; };
+        rec.onend = () => { ouvindo = false; mic.classList.remove('on'); };
+        rec.start();
+      } catch (e) { mic.hidden = true; }
+    });
+  }
+
+  // ---- render ----
+  function pintarTitulos(){
+    const M = METRICAS[metrica];
+    document.getElementById('a-t-scatter').textContent = `Volume × desempenho · ${M.label} · ${rotuloCliente()}`;
+    const rotulo = D.dims[dimensao].label;
+    document.getElementById('a-t-rank').textContent =
+      `Onde atuar primeiro · por ${rotulo === rotulo.toUpperCase() ? rotulo : rotulo.toLowerCase()} · ${rotuloCliente()}`;
+  }
+  function render(destaque){
+    pintarChips(); pintarTitulos();
+    const dados = celulas();
+    renderKpis(dados); renderScatter(dados, destaque); renderTabela(dados, destaque);
+  }
+  render();
+})();
+</script>
+
+
+<script>
+(function(){
+  const tabs = [['tab-exito','panel-exito'],['tab-reversao','panel-reversao'],['tab-atuacao','panel-atuacao']];
+  function show(id){ tabs.forEach(([t,p])=>{ const on = t===id; document.getElementById(t).setAttribute('aria-selected', on); document.getElementById(p).hidden = !on; }); try { localStorage.setItem('painel-tab', id); } catch(e){} }
+  tabs.forEach(([t])=>document.getElementById(t).addEventListener('click', ()=>show(t)));
+  let saved = null; try { saved = localStorage.getItem('painel-tab'); } catch(e){}
+  if (saved && tabs.some(([t])=>t===saved)) show(saved);
+})();
+</script>
+
+

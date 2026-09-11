@@ -1,0 +1,15 @@
+# credenciais — nunca versionar
+.env
+*.env
+!.env.example
+
+# saída gerada
+out/
+*.html.bak
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/

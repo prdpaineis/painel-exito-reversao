@@ -1,0 +1,36 @@
+name: Atualizar painel diariamente
+
+on:
+  schedule:
+    - cron: "0 10 * * 1-5"   # 07:00 BRT (UTC-3) de segunda a sexta
+  workflow_dispatch:           # permite rodar manualmente no GitHub
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # precisa para fazer o commit do painel.html
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Gerar painel
+        env:
+          ODOO_URL: ${{ secrets.ODOO_URL }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          ODOO_LOGIN: ${{ secrets.ODOO_LOGIN }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
+        run: python atualizar.py
+
+      - name: Commitar painel atualizado
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp out/painel.html painel-exito-reversao.html
+          git add painel-exito-reversao.html
+          git diff --cached --quiet || git commit -m "painel: atualização automática $(date +'%d/%m/%Y')"
+          git push

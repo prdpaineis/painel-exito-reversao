@@ -87,30 +87,21 @@ CLASSE_DESFAVORAVEL = {TIPO_PROCEDENTE, TIPO_PARCIALMENTE_PROCEDENTE, TIPO_DESFA
 # dossie_recurso: quais valores contam como "recurso nosso"
 RECURSO_NOSSO = {"representada", "ambos"}
 
-# Clientes que aparecem com nome próprio no painel; o resto é somado em "Outros".
-# ATENÇÃO: a aba de sentenças abrevia o CCB e a de reversão usa o nome completo.
-# É assim que o painel está publicado hoje; mudar aqui muda o rótulo na página.
-CLIENTES_SENTENCAS = [
-    "Santander",
-    "Gol",
-    "Bradesco",
-    "Mercantil",
-    "Cielo",
-    "Omni",
-    "Ccb Brasil - China Construction Bank",
-]
-APELIDOS_SENTENCAS = {"Ccb Brasil - China Construction Bank": "CCB Brasil"}
+# project.task.tipo_recurso_id (nome do tipo): quem recorreu, usado nas abas
+# "Recorri e ganhei" e "Autor recorreu e perdi". 'inomi' e 'prep' são valores
+# abreviados que aparecem em lançamentos mais antigos — mantidos porque ainda
+# existem casos de 2026 com esse texto no campo.
+RECURSO_TIPO_NOSSO = {"Apelação", "Inominado", "Preparo", "inomi", "prep"}
+RECURSO_TIPO_AUTOR = {"Contrarrazões - Apelação", "Contrarrazões - Inominado", "Contrarrazões - Adesivo"}
 
-CLIENTES_REVERSAO = [
-    "Santander",
-    "Gol",
-    "Bradesco",
-    "Mercantil",
-    "Cielo",
-    "Ccb Brasil - China Construction Bank",
-    "Omni",
-]
-APELIDOS_REVERSAO: dict[str, str] = {}
+# O nome longo do CCB (como o Odoo devolve em grupo_id) vira este apelido em toda
+# a página — Sentenças, Reversão, Onde atuar e as duas abas de recursos.
+ALIAS_CLIENTE = {"Ccb Brasil - China Construction Bank": "CCB Brasil"}
+
+# Carteira padrão (7 clientes) das abas Reversão, "Recorri e ganhei" e "Autor
+# recorreu e perdi" — o resto vai para "Outros". A aba Sentenças não usa uma
+# lista fixa: a carteira lá é dinâmica, por volume recente (ver sentencas.py).
+CLIENTES_PADRAO = ["Santander", "Gol", "Bradesco", "Mercantil", "Cielo", "Omni", "CCB Brasil"]
 
 # Aba "Onde atuar": lista e ordem dos clientes (a ordem define os índices no JSON).
 # ATENÇÃO: aqui o CCB entra abreviado, como na aba de sentenças; a aba de reversão
@@ -136,10 +127,18 @@ SIGLA_UF = {
     "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC", "São Paulo": "SP",
     "Sergipe": "SE", "Tocantins": "TO",
 }
+NOME_UF = {sigla: nome for nome, sigla in SIGLA_UF.items()}
 
-# Projeto do Santander só ganha linha própria a partir deste volume no ano corrente.
-MIN_ACORDAOS_PROJETO = 30
-MIN_SENTENCAS_PROJETO = 40
+# Sentenças e Reversão: só os N projetos do Santander com mais volume no ano
+# corrente ganham linha própria; os demais somam em "Outros projetos".
+TOP_PROJETOS_SENTENCAS = 13
+TOP_PROJETOS_REVERSAO = 11
+
+# Aba "Sentenças": um cliente só ganha aba/chip próprio (carteira) com pelo menos
+# este número de sentenças nos últimos N meses fechados; de 1 até esse piso vira
+# "Outros"; 0 nesse período = saiu da carteira (fora de todos os números).
+MIN_SENTENCAS_CARTEIRA = 5
+MESES_JANELA_CARTEIRA = 3
 
 # Aba "Onde atuar": piso para um projeto ganhar chip próprio. O volume é medido no
 # recorte por UF (a dimensão que a aba abre por padrão), então cada caso conta uma

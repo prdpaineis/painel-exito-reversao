@@ -256,28 +256,66 @@ tr.mark td:first-child{background:var(--exito-soft)}
 .linkbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:3px}
 #a-scatter svg{min-height:300px}
 .controls[hidden],.chips[hidden]{display:none}
+
+:root{--ext:#2f9fb3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ext:#58c3d4}}
+:root[data-theme="dark"]{--ext:#58c3d4}
+.e-carteira{font-size:12.5px;color:var(--ink-2);margin:-6px 0 14px;line-height:1.5}
+.e-carteira .e-dim{color:var(--ink-3)}
+.e-sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:0}
+#e-metric .chip,#e-geodim .chip{font-size:12px;padding:5px 10px}
+
+.rl-busca{flex:1 1 280px;min-width:0;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px}
+.rl-busca:focus{outline:2px solid var(--focus);outline-offset:-1px}
+.kpis.rl-k3{grid-template-columns:2fr 1fr 1fr}
+@media (max-width:900px){.kpis.rl-k3{grid-template-columns:1fr}}
+.kpi.rl-ruim{border-color:var(--proc);background:linear-gradient(0deg,var(--heatr1-bg),var(--surface) 70%)}
+.kpi.rl-ruim .v{color:var(--proc)}
+td.rl-l{text-align:left}
+.rl-trans .de{color:var(--ink-3)}
+.rl-ok{color:var(--exito);font-weight:700}
+.rl-mal{color:var(--proc);font-weight:700}
+.rl-cont{font-size:12px;color:var(--ink-3);margin-top:8px}
+.rl-mais{margin:8px 0 0;appearance:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:8px;padding:7px 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.rl-mais:hover{border-color:var(--accent);color:var(--ink)}
+.rl-mais:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.rl-dim{color:var(--ink-3)}
+.rl-agr-cmp{margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}
 </style>
 
 <div class="wrap">
   <div class="topbar">
     <div><div class="eyebrow">Parada Advogados · Odoo MMP</div><h1>Êxito e Reversão</h1></div>
-    <div class="meta">Dados do MMP em <b>__ASOF__</b> · meses fechados jan–ago/2026</div>
+    <div class="meta">Dados do MMP em <b>__ASOF__</b> · meses fechados __PERIODO__</div>
   </div>
   <div class="tabs" role="tablist" aria-label="Painéis">
     <button class="tab" role="tab" id="tab-exito" aria-selected="true" aria-controls="panel-exito">Sentenças</button>
     <button class="tab" role="tab" id="tab-reversao" aria-selected="false" aria-controls="panel-reversao">Reversão recursal</button>
     <button class="tab" role="tab" id="tab-atuacao" aria-selected="false" aria-controls="panel-atuacao">Onde atuar</button>
+    <button class="tab" role="tab" id="tab-ganhei" aria-selected="false" aria-controls="panel-ganhei">Recorri e ganhei</button>
+    <button class="tab" role="tab" id="tab-perdi" aria-selected="false" aria-controls="panel-perdi">Autor recorreu e perdi</button>
   </div>
 
 
 <div class="panel" id="panel-exito">
   <header>
     <div>
-            <h2 class="ptitle">Sentenças — êxito por carteira</h2>
-      <p class="sub">Sentenças de 1º grau por mês de 2026, por cliente. Êxito = <b>improcedência</b> + <b>extinção</b>, sobre o total de sentenças com resultado registrado. Passe o mouse nos gráficos e tabelas para o detalhe.</p>
+      <h2 class="ptitle">Sentenças — êxito por carteira</h2>
+      <p class="sub">Sentenças de 1º grau em __ANO__ por cliente, UF e comarca. Êxito = <b>improcedência</b> + <b>extinção</b>, e as duas aparecem separadas. Passe o mouse nos gráficos e tabelas para o detalhe.</p>
     </div>
-    <div class="meta">Dados do MMP em <b id="e-asof"></b><br>Meses fechados: <b>jan–ago/2026</b> · setembro parcial<br>Comparativo: mesmo período de 2025</div>
+    <div class="meta">Dados do MMP em <b id="e-asof"></b><br>Meses fechados: <b>__PERIODO__</b> · __MES_PARCIAL__ parcial<br>Comparativo: mesmo período de __ANO_ANT__, com os clientes atuais</div>
   </header>
+
+  <div class="ask">
+    <div class="askbar">
+      <span class="askicon" aria-hidden="true">?</span>
+      <label class="sr" for="e-q">Pergunte sobre o êxito em sentença</label>
+      <input id="e-q" type="text" autocomplete="off" placeholder="Ex.: êxito do Santander em Recife · extinção com advogado agressor na Bahia · improcedência da Gol em SP">
+      <button class="askgo" id="e-go" type="button">Perguntar</button>
+    </div>
+    <div class="askhint">Entende cliente, UF, comarca e se a pergunta é sobre êxito, improcedência, extinção ou advogado agressor. Responde na hora, com os números de __PERIODO__.</div>
+    <div class="askout" id="e-out" hidden></div>
+  </div>
 
   <div class="controls">
     <span class="eyebrow">Cliente</span>
@@ -285,34 +323,53 @@ tr.mark td:first-child{background:var(--exito-soft)}
     <span class="spacer"></span>
     <button class="toggle" id="e-cmp" aria-pressed="true"><span class="sw"></span>Comparar com 2025</button>
   </div>
+  <p class="e-carteira" id="e-carteira"></p>
 
   <div class="kpis" id="e-kpis"></div>
 
   <div class="grid2">
     <div class="card">
-      <div class="h"><h2 id="e-t-rate">Taxa de êxito mensal</h2><span class="note">jan–ago · % das sentenças com resultado</span></div>
+      <div class="h"><h2 id="e-t-rate">Êxito mensal</h2><span class="note">__PERIODO_CURTO__ · % das sentenças com resultado</span></div>
       <div class="chart" id="e-c-rate"></div>
-      <div class="legend"><span><i class="line"></i>2026</span><span id="e-lg-2025"><i class="dash"></i>2025, mesmo mês</span></div>
+      <div class="legend"><span><i style="background:var(--exito)"></i>Improcedência</span><span><i style="background:var(--ext)"></i>Extinção</span><span id="e-lg-2025"><i class="dash"></i>Êxito em 2025, mesmo mês</span></div>
     </div>
     <div class="card">
-      <div class="h"><h2 id="e-t-vol">Sentenças por mês e resultado</h2><span class="note">jan–ago · quantidade</span></div>
+      <div class="h"><h2 id="e-t-vol">Sentenças por mês e resultado</h2><span class="note">__PERIODO_CURTO__ · quantidade</span></div>
       <div class="chart" id="e-c-vol"></div>
-      <div class="legend"><span><i style="background:var(--exito)"></i>Êxito (improcedente + extinção)</span><span><i style="background:var(--parc)"></i>Parcialmente procedente</span><span><i style="background:var(--proc)"></i>Procedente</span><span class="note">acordos homologados só na tabela</span></div>
+      <div class="legend"><span><i style="background:var(--exito)"></i>Improcedência</span><span><i style="background:var(--ext)"></i>Extinção</span><span><i style="background:var(--parc)"></i>Parcialmente procedente</span><span><i style="background:var(--proc)"></i>Procedente</span><span class="note">acordos só nas tabelas</span></div>
     </div>
   </div>
 
-  <div class="section"><h2>Taxa de êxito por cliente</h2><span class="note">Cada célula: % de êxito no mês (nº de sentenças embaixo). Colunas finais: acumulado jan–ago de 2026 e de 2025.</span></div>
+  <div class="section" style="align-items:center">
+    <h2>Por cliente, mês a mês</h2>
+    <div class="chips" id="e-metric" role="group" aria-label="Métrica das tabelas"></div>
+  </div>
+  <p class="note" id="e-metric-note" style="margin:-4px 0 10px;font-size:12px;color:var(--ink-3)"></p>
   <div class="tablewrap"><table id="e-t-clients"></table></div>
-  <div class="scale" style="margin-top:8px"><span>menor êxito</span><span class="sw"><i style="background:var(--heat1-bg)"></i><i style="background:var(--heat2-bg)"></i><i style="background:var(--heat3-bg)"></i><i style="background:var(--heat4-bg)"></i><i style="background:var(--heat5-bg)"></i><i style="background:var(--heat6-bg)"></i><i style="background:var(--heat7-bg)"></i></span><span>maior êxito</span><span style="margin-left:10px">escala 30% → 90%</span></div>
+  <div class="scale" id="e-scale" style="margin-top:8px"></div>
 
-  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com 40 sentenças ou mais em 2026; os demais somados em "Outros projetos". Ordenado pelo volume de 2026.</span></div>
+  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com mais sentenças em __ANO__; os demais somados em "Outros projetos". Mesma métrica selecionada acima.</span></div>
   <div class="tablewrap"><table id="e-t-projects"></table></div>
+
+  <div class="section" style="align-items:center">
+    <h2 id="e-t-geo-h">Por UF e comarca</h2>
+    <div class="chips" id="e-geodim" role="group" aria-label="Recorte geográfico"></div>
+  </div>
+  <p class="note" style="margin:-4px 0 10px;font-size:12px;color:var(--ink-3)">__PERIODO__ · segue o cliente escolhido acima · ordenado pelo volume de sentenças. A comarca aparece sempre com a UF.</p>
+  <div class="controls"><input class="rl-busca" id="e-geo-q" type="search" autocomplete="off" placeholder="Filtrar UF ou comarca" aria-label="Filtrar UF ou comarca"></div>
+  <div class="tablewrap"><table id="e-t-geo"></table></div>
+  <div class="rl-cont" id="e-geo-cont"></div>
+  <button type="button" class="rl-mais" id="e-geo-mais">Mostrar mais 50</button>
 
   <div class="defs">
     <h3>Como os números são calculados</h3>
-    <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) com <code>data_sentenca</code> no mês, agrupado por <code>grupo_id</code> (cliente) ou <code>projeto_id</code> (projeto), pelo <code>tipo_sentenca_id</code>. Inclui casos arquivados. Cada caso conta uma vez, com a sentença registrada nele no momento da extração.</p>
-    <p><b>Êxito:</b> tipos <i>Improcedente</i> e <i>Extinção sem Julgamento do Mérito</i> (mais 4 casos de <i>Extinção da Execução</i> no período). <b>Taxa:</b> êxito ÷ (improcedente + extinção + parcialmente procedente + procedente + homologação de acordo). Sentenças sem tipo informado ficam fora do denominador e aparecem na coluna "s/ tipo" das tabelas.</p>
-    <p><b>Setembro</b> só tem dados até <span id="e-asof2"></span>; por isso os gráficos e os acumulados param em agosto, e a coluna "set" das tabelas está marcada como parcial.</p>
+    <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) com <code>data_sentenca</code> no mês, agrupado por <code>grupo_id</code> (cliente), <code>projeto_id</code> (projeto), <code>estado_id</code> (UF) e <code>comarca_id</code> (comarca), pelo <code>tipo_sentenca_id</code>. Inclui casos arquivados. Cada caso conta uma vez.</p>
+    <p><b>Improcedência × extinção:</b> <i>improcedência</i> é a decisão de mérito que rejeita o pedido do autor. <i>Extinção</i> encerra o processo sem julgar o mérito (ou extingue a execução) — em regra o autor pode voltar a ajuizar. As duas somam o êxito, mas não valem o mesmo, por isso aparecem separadas.</p>
+    <p><b>Extinção com advogado agressor:</b> extinção em caso com o campo <i>Tem Advogado Agressor</i> marcado (<code>has_advogado_adverso_agressor</code>): __AGR__ das __EXT__ extinções de __PERIODO__. O campo <i>Agressor/Contumaz</i> do caso (<code>agressor_contumaz</code>) é mais amplo — junta advogado agressor e parte contumaz — e marca __CONT__ dessas extinções; ele não foi usado.</p>
+    <p><b>Carteira:</b> tem aba própria o cliente com 5 sentenças ou mais em __JANELA_CARTEIRA__; com 1 a 4, entra em "Outros"; sem nenhuma, saiu da carteira e fica fora de todos os números, inclusive do comparativo com 2025, para comparar a mesma carteira nos dois anos.</p>
+    <p><b>Êxito:</b> improcedência + extinção ÷ (improcedente + extinção + parcialmente procedente + procedente + homologação de acordo). Sentenças sem tipo ficam fora do denominador (coluna "s/ tipo").</p>
+    <p><b>A pergunta</b> é interpretada na própria página, sem enviar nada para fora. Ela mostra o que entendeu antes da resposta; se entender errado, reformule citando o cliente, a UF ou a comarca.</p>
+    <p><b>__MES_PARCIAL_LONGO_CAP__</b> só tem dados até <span id="e-asof2"></span>; os gráficos e os acumulados param em __MES_FECHADO_LONGO__.</p>
     <p id="e-outros-note"></p>
   </div>
 </div>
@@ -321,34 +378,61 @@ tr.mark td:first-child{background:var(--exito-soft)}
 <script>
 (function(){
   const D = JSON.parse(document.getElementById('e-data').textContent);
+  const G = D.geo;
   const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  const LAST = D.lastFullMonth; // 8
+  const LAST = D.lastFullMonth;
   const fmt = n => n.toLocaleString('pt-BR');
   const pct = (r, d=0) => r==null ? '–' : (r*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const limpo = n => String(n).replace(/,\s*[\d./-]+\s*$/, '');
+  const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const achatar = s => norm(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
   document.getElementById('e-asof').textContent = D.asOf; document.getElementById('e-asof2').textContent = D.asOf;
 
-  // ---- agregação ----
-  const zero = () => [0,0,0,0,0,0];
+  // vetor mensal: [improc, extincao, parcial, procedente, acordo, sem tipo, extincao c/ adv. agressor, extincao c/ agressor/contumaz]
+  const N = 8;
+  const zero = () => new Array(N).fill(0);
   const add = (a,b) => a.map((v,i)=>v+(b[i]||0));
   const sumMonths = (y, m1, m2) => { let s = zero(); for (let m=m1; m<=m2; m++) s = add(s, y[m-1]); return s; };
   const denom = a => a[0]+a[1]+a[2]+a[3]+a[4];
   const rate = a => denom(a) ? (a[0]+a[1])/denom(a) : null;
-  const allClients = { name:'Todos', y:{ '2025': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
+  const METR = {
+    exito:  {label:'Êxito', fn:a=>denom(a)?(a[0]+a[1])/denom(a):null, den:denom, lo:.3, hi:.9,
+             nota:'Improcedência + extinção, sobre as sentenças com resultado. Número embaixo = sentenças.'},
+    improc: {label:'Improcedência', fn:a=>denom(a)?a[0]/denom(a):null, den:denom, lo:.1, hi:.6,
+             nota:'Só improcedência, sobre as sentenças com resultado. Número embaixo = sentenças.'},
+    ext:    {label:'Extinção', fn:a=>denom(a)?a[1]/denom(a):null, den:denom, lo:.1, hi:.6,
+             nota:'Só extinção (sem mérito ou da execução), sobre as sentenças com resultado. Número embaixo = sentenças.'},
+    agr:    {label:'Extinção c/ advogado agressor', fn:a=>a[1]?a[6]/a[1]:null, den:a=>a[1], lo:0, hi:.3,
+             nota:'Das extinções, % em casos com advogado adverso agressor. Número embaixo = extinções.'},
+  };
+  let metrica = 'exito';
+  const allClients = { name:'Todos', total:true, y:{ '2025': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.clients.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
   const entities = [allClients, ...D.clients];
   let sel = 'Todos', cmp = true;
 
-  // ---- chips ----
+  // ---- chips e notas de carteira ----
   const chips = document.getElementById('e-chips');
-  entities.forEach(e => { const b = document.createElement('button'); b.className='chip'; b.textContent = e.name; b.setAttribute('aria-pressed', e.name===sel); b.addEventListener('click', ()=>{ sel = e.name; render(); }); chips.appendChild(b); });
+  entities.forEach(e => { const b = document.createElement('button'); b.type='button'; b.className='chip'; b.textContent = e.name; b.addEventListener('click', ()=>{ sel = e.name; render(); }); chips.appendChild(b); });
   const cmpBtn = document.getElementById('e-cmp');
   cmpBtn.addEventListener('click', ()=>{ cmp = !cmp; cmpBtn.setAttribute('aria-pressed', cmp); render(); });
   const outros = D.clients.find(c=>c.name==='Outros');
-  if (outros && outros.members) document.getElementById('e-outros-note').innerHTML = '<b>"Outros"</b> reúne: ' + outros.members.join(', ') + '.';
+  if (outros && outros.members) document.getElementById('e-outros-note').innerHTML = '<b>"Outros"</b> reúne clientes com 1 a 4 sentenças em __JANELA_CARTEIRA__: ' + outros.members.map(m=>esc(limpo(m))).join(', ') + '.';
+  const cart = [];
+  if (D.novos && D.novos.length) cart.push('<b>Novos na carteira:</b> ' + D.novos.map(s=>esc(limpo(s.name))+' <span class="e-dim">(desde '+s.desde+')</span>').join(', ') + '.');
+  if (D.sairam && D.sairam.length) cart.push('<b>Saíram</b> e não entram nos números: ' + D.sairam.map(s=>esc(limpo(s.name))+' <span class="e-dim">(última sentença '+s.ultimo+')</span>').join(', ') + '.');
+  document.getElementById('e-carteira').innerHTML = cart.join(' ');
 
   // ---- tooltip ----
-  function tipFor(container){ let t = container.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className='tip'; container.appendChild(t);} return t; }
-  function showTip(container, html, x, y){ const t = tipFor(container); t.innerHTML = html; t.classList.add('on'); const w = container.clientWidth; const tw = t.offsetWidth; let left = x + 14; if (left + tw > w) left = x - tw - 14; t.style.left = Math.max(0,left)+'px'; t.style.top = Math.max(0, y - 10)+'px'; }
-  function hideTip(container){ const t = container.querySelector('.tip'); if (t) t.classList.remove('on'); }
+  function tipFor(c){ let t = c.querySelector('.tip'); if(!t){ t = document.createElement('div'); t.className='tip'; c.appendChild(t);} return t; }
+  function showTip(c, html, x, y){ const t = tipFor(c); t.innerHTML = html; t.classList.add('on'); const w = c.clientWidth, tw = t.offsetWidth; let left = x + 14; if (left + tw > w) left = x - tw - 14; t.style.left = Math.max(0,left)+'px'; t.style.top = Math.max(0, y - 10)+'px'; }
+  function hideTip(c){ const t = c.querySelector('.tip'); if (t) t.classList.remove('on'); }
+  const linhasTip = a => `<div class="row"><span><i style="background:var(--exito)"></i>improcedentes</span><span>${fmt(a[0])} · ${pct(denom(a)?a[0]/denom(a):null,0)}</span></div>`
+    + `<div class="row"><span><i style="background:var(--ext)"></i>extinções</span><span>${fmt(a[1])} · ${pct(denom(a)?a[1]/denom(a):null,0)}</span></div>`
+    + `<div class="row"><span>&nbsp;&nbsp;&nbsp;c/ advogado agressor</span><span>${fmt(a[6])}</span></div>`
+    + `<div class="row"><span><i style="background:var(--parc)"></i>parciais</span><span>${fmt(a[2])}</span></div>`
+    + `<div class="row"><span><i style="background:var(--proc)"></i>procedentes</span><span>${fmt(a[3])}</span></div>`
+    + (a[4] ? `<div class="row"><span>acordos</span><span>${fmt(a[4])}</span></div>` : '');
 
   // ---- KPIs ----
   function renderKpis(e){
@@ -356,77 +440,89 @@ tr.mark td:first-child{background:var(--exito-soft)}
     const r26 = rate(a26), r25 = rate(a25);
     const dRate = (r26!=null && r25!=null) ? (r26-r25)*100 : null;
     const deltaHtml = dRate==null ? '' : `<span class="${dRate>=0?'delta-up':'delta-down'}">${dRate>=0?'▲':'▼'} ${Math.abs(dRate).toLocaleString('pt-BR',{maximumFractionDigits:1})} p.p.</span> vs 2025 (${pct(r25,1)})`;
-    const share = (i) => denom(a26) ? pct(a26[i]/denom(a26),0) : '–';
+    const share = i => denom(a26) ? pct(a26[i]/denom(a26),0) : '–';
     const k = [
-      {l:'Sentenças jan–ago/2026', v:fmt(denom(a26)), d: cmp ? `${fmt(denom(a25))} em 2025` : (a26[5]? fmt(a26[5])+' sem tipo' : '&nbsp;')},
+      {l:'Sentenças __PERIODO__', v:fmt(denom(a26)), d: cmp ? `${fmt(denom(a25))} em __ANO_ANT__` : (a26[5]? fmt(a26[5])+' sem tipo' : '&nbsp;')},
       {l:'Taxa de êxito', v:pct(r26,1), d: cmp ? deltaHtml : `${fmt(a26[0]+a26[1])} de ${fmt(denom(a26))}`, hero:true},
-      {l:'Improcedentes', v:fmt(a26[0]), d:`${share(0)} das sentenças`},
-      {l:'Extinções sem mérito', v:fmt(a26[1]), d:`${share(1)} das sentenças`},
-      {l:'Parcialmente procedentes', v:fmt(a26[2]), d:`${share(2)} das sentenças`},
-      {l:'Procedentes', v:fmt(a26[3]), d:`${share(3)} das sentenças`},
+      {l:'Improcedência', sw:'var(--exito)', v:fmt(a26[0]), d:`${share(0)} das sentenças`},
+      {l:'Extinção', sw:'var(--ext)', v:fmt(a26[1]), d:`${share(1)} das sentenças · <b>${fmt(a26[6])}</b> com advogado agressor${a26[1]?' ('+pct(a26[6]/a26[1],0)+')':''}`},
+      {l:'Parcialmente procedentes', sw:'var(--parc)', v:fmt(a26[2]), d:`${share(2)} das sentenças`},
+      {l:'Procedentes', sw:'var(--proc)', v:fmt(a26[3]), d:`${share(3)} das sentenças`},
     ];
-    document.getElementById('e-kpis').innerHTML = k.map(x=>`<div class="kpi${x.hero?' hero':''}"><div class="l">${x.l}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
+    document.getElementById('e-kpis').innerHTML = k.map(x=>`<div class="kpi${x.hero?' hero':''}"><div class="l">${x.sw?`<i class="e-sw" style="background:${x.sw}"></i>`:''}${x.l}</div><div class="v">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
   }
 
-  // ---- gráfico de linha (taxa) ----
+  // ---- êxito mensal: área de improcedência + área de extinção = êxito ----
   function renderRate(e){
     const W=520, H=260, P={l:40,r:44,t:14,b:28};
     const iw = W-P.l-P.r, ih = H-P.t-P.b;
-    const xs = i => P.l + iw*(i)/(LAST-1);
+    const xs = i => P.l + iw*i/(LAST-1);
     const ys = r => P.t + ih*(1-r);
-    const r26 = Array.from({length:LAST},(_,i)=>rate(e.y['2026'][i]));
+    const m26 = Array.from({length:LAST},(_,i)=>e.y['2026'][i]);
+    const tot = m26.map(rate);
+    const imp = m26.map(a => denom(a) ? a[0]/denom(a) : null);
     const r25 = Array.from({length:LAST},(_,i)=>rate(e.y['2025'][i]));
     const ticks = [0,.25,.5,.75,1];
-    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Taxa de êxito mensal de ${e.name}">`;
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Êxito mensal de ${esc(e.name)}, separado em improcedência e extinção">`;
     g += '<g class="grid">' + ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}"/>`).join('') + '</g>';
     g += ticks.map(t=>`<text x="${P.l-6}" y="${ys(t)+4}" text-anchor="end">${Math.round(t*100)}%</text>`).join('');
     g += Array.from({length:LAST},(_,i)=>`<text x="${xs(i)}" y="${H-8}" text-anchor="middle">${MESES[i]}</text>`).join('');
-    const path = (arr) => arr.map((r,i)=> r==null ? null : `${i===0||arr[i-1]==null?'M':'L'}${xs(i).toFixed(1)},${ys(r).toFixed(1)}`).filter(Boolean).join(' ');
-    if (cmp) g += `<path d="${path(r25)}" fill="none" stroke="var(--ghost)" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>`;
-    // área suave sob 2026
-    const first = r26.findIndex(v=>v!=null), last = r26.length-1-[...r26].reverse().findIndex(v=>v!=null);
-    if (first>=0) g += `<path d="${path(r26)} L${xs(last).toFixed(1)},${ys(0)} L${xs(first).toFixed(1)},${ys(0)} Z" fill="var(--exito)" opacity="0.08"/>`;
-    g += `<path d="${path(r26)}" fill="none" stroke="var(--exito)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-    r26.forEach((r,i)=>{ if(r!=null) g += `<circle cx="${xs(i)}" cy="${ys(r)}" r="4" fill="var(--exito)" stroke="var(--surface)" stroke-width="2"/>`; });
-    if (last>=0 && r26[last]!=null) g += `<text class="lbl" x="${xs(last)+8}" y="${ys(r26[last])+4}" style="fill:var(--exito)">${pct(r26[last],0)}</text>`;
-    if (cmp){ const l25 = r25.length-1-[...r25].reverse().findIndex(v=>v!=null); if (l25>=0 && r25[l25]!=null && Math.abs(ys(r25[l25])-ys(r26[last]))>14) g += `<text x="${xs(l25)+8}" y="${ys(r25[l25])+4}" style="fill:var(--ghost);font-weight:600">${pct(r25[l25],0)}</text>`; }
+    const path = arr => arr.map((r,i)=> r==null ? null : `${i===0||arr[i-1]==null?'M':'L'}${xs(i).toFixed(1)},${ys(r).toFixed(1)}`).filter(Boolean).join(' ');
+    const area = (lo, hi) => {
+      let d = '', seg = [];
+      const flush = () => {
+        if (seg.length > 1) d += 'M' + seg.map(i=>`${xs(i).toFixed(1)},${ys(hi[i]).toFixed(1)}`).join(' L')
+          + ' L' + [...seg].reverse().map(i=>`${xs(i).toFixed(1)},${ys(lo ? lo[i] : 0).toFixed(1)}`).join(' L') + ' Z ';
+        seg = [];
+      };
+      for (let i=0; i<LAST; i++) { if (hi[i]==null || (lo && lo[i]==null)) flush(); else seg.push(i); }
+      flush(); return d;
+    };
+    g += `<path d="${area(null, imp)}" fill="var(--exito)" opacity="0.30"/>`;
+    g += `<path d="${area(imp, tot)}" fill="var(--ext)" opacity="0.45"/>`;
+    if (cmp) g += `<path d="${path(r25)}" fill="none" stroke="var(--ghost)" stroke-width="2" stroke-dasharray="5 4"/>`;
+    g += `<path d="${path(imp)}" fill="none" stroke="var(--exito)" stroke-width="1.2" stroke-opacity=".8"/>`;
+    g += `<path d="${path(tot)}" fill="none" stroke="var(--exito)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    tot.forEach((r,i)=>{ if(r!=null) g += `<circle cx="${xs(i)}" cy="${ys(r)}" r="4" fill="var(--exito)" stroke="var(--surface)" stroke-width="2"/>`; });
+    const last = tot.length-1-[...tot].reverse().findIndex(v=>v!=null);
+    if (last>=0 && tot[last]!=null) g += `<text class="lbl" x="${xs(last)+8}" y="${ys(tot[last])+4}" style="fill:var(--exito)">${pct(tot[last],0)}</text>`;
     g += `<line id="e-xh" x1="0" x2="0" y1="${P.t}" y2="${H-P.b}" stroke="var(--line-2)" stroke-width="1" style="display:none"/>`;
-    g += `<rect x="${P.l}" y="${P.t}" width="${iw}" height="${ih}" fill="transparent" id="e-rate-hit"/>`;
-    g += '</svg>';
+    g += `<rect x="${P.l}" y="${P.t}" width="${iw}" height="${ih}" fill="transparent" id="e-rate-hit"/></svg>`;
     const c = document.getElementById('e-c-rate'); c.innerHTML = g;
     const svg = c.querySelector('svg'), hit = c.querySelector('#e-rate-hit'), xh = c.querySelector('#e-xh');
     hit.addEventListener('mousemove', ev => {
-      const rect = svg.getBoundingClientRect(); const sx = (ev.clientX-rect.left)*W/rect.width; const i = Math.max(0, Math.min(LAST-1, Math.round((sx-P.l)/iw*(LAST-1))));
+      const rect = svg.getBoundingClientRect(); const sx = (ev.clientX-rect.left)*W/rect.width;
+      const i = Math.max(0, Math.min(LAST-1, Math.round((sx-P.l)/iw*(LAST-1))));
       xh.setAttribute('x1', xs(i)); xh.setAttribute('x2', xs(i)); xh.style.display='';
       const a = e.y['2026'][i], b = e.y['2025'][i];
-      let html = `<b>${MESES[i]}/2026</b> · ${fmt(denom(a))} sentenças<div class="row"><span><i style="background:var(--exito)"></i>Êxito</span><b>${pct(rate(a),1)}</b></div><div class="row"><span>improcedentes</span><span>${fmt(a[0])}</span></div><div class="row"><span>extinções</span><span>${fmt(a[1])}</span></div><div class="row"><span><i style="background:var(--parc)"></i>parciais</span><span>${fmt(a[2])}</span></div><div class="row"><span><i style="background:var(--proc)"></i>procedentes</span><span>${fmt(a[3])}</span></div>`;
-      if (a[4]) html += `<div class="row"><span>acordos</span><span>${fmt(a[4])}</span></div>`;
+      let html = `<b>${MESES[i]}/__ANO__</b> · ${fmt(denom(a))} sentenças<div class="row"><span>Êxito</span><b>${pct(rate(a),1)}</b></div>` + linhasTip(a);
       if (cmp) html += `<div class="row" style="margin-top:4px;opacity:.8"><span>${MESES[i]}/2025</span><span>${pct(rate(b),1)} · ${fmt(denom(b))}</span></div>`;
-      showTip(c, html, (ev.clientX-rect.left), (ev.clientY-rect.top));
+      showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top);
     });
     hit.addEventListener('mouseleave', ()=>{ hideTip(c); xh.style.display='none'; });
   }
 
-  // ---- barras empilhadas (volume) ----
+  // ---- barras empilhadas ----
+  function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v/p; const n = f<=1?1:f<=2?2:f<=2.5?2.5:f<=4?4:f<=5?5:f<=8?8:10; return n*p; }
   function renderVol(e){
     const W=520, H=260, P={l:44,r:12,t:14,b:28};
     const iw = W-P.l-P.r, ih = H-P.t-P.b;
     const months = Array.from({length:LAST},(_,i)=>e.y['2026'][i]);
     const max = Math.max(1, ...months.map(a=>a[0]+a[1]+a[2]+a[3]));
-    const nice = niceMax(max);
-    const ys = v => P.t + ih*(1-v/nice);
+    const nice = niceMax(max); const ys = v => P.t + ih*(1-v/nice);
     const bw = iw/LAST, barw = Math.min(40, bw*0.62);
     const ticks = [0,.25,.5,.75,1].map(t=>t*nice);
-    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sentenças por mês e resultado de ${e.name}">`;
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Sentenças por mês e resultado de ${esc(e.name)}">`;
     g += '<g class="grid">' + ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${ys(t)}" y2="${ys(t)}"/>`).join('') + '</g>';
-    g += ticks.map(t=>`<text x="${P.l-6}" y="${ys(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('');
+    g += ticks.map(t=>`<text x="${P.l-6}" y="${ys(t)+4}" text-anchor="end">${fmt(Math.round(t))}</text>`).join('');
     months.forEach((a,i)=>{
       const x = P.l + bw*i + (bw-barw)/2;
-      const segs = [[a[0]+a[1],'var(--exito)'],[a[2],'var(--parc)'],[a[3],'var(--proc)']];
-      let y0 = 0; let topK = -1; segs.forEach(([v],k)=>{ if (v) topK = k; });
-      segs.forEach(([v,col],k)=>{ if(!v) return; const y1 = ys(y0), y2 = ys(y0+v); const h = Math.max(0, y1-y2-2); g += `<rect x="${x.toFixed(1)}" y="${(y2+1).toFixed(1)}" width="${barw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}" rx="${k===topK?3:0}"/>`; y0 += v; });
+      const segs = [[a[0],'var(--exito)'],[a[1],'var(--ext)'],[a[2],'var(--parc)'],[a[3],'var(--proc)']];
+      let y0 = 0, topK = -1; segs.forEach(([v],k)=>{ if (v) topK = k; });
+      segs.forEach(([v,col],k)=>{ if(!v) return; const y1 = ys(y0), y2 = ys(y0+v); const h = Math.max(0, y1-y2-2);
+        g += `<rect x="${x.toFixed(1)}" y="${(y2+1).toFixed(1)}" width="${barw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}" rx="${k===topK?3:0}"/>`; y0 += v; });
       g += `<text x="${(x+barw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">${MESES[i]}</text>`;
-      const tot = a[0]+a[1]+a[2]+a[3]; if (tot) g += `<text class="lbl" x="${(x+barw/2).toFixed(1)}" y="${(ys(tot)-5).toFixed(1)}" text-anchor="middle">${fmt(tot)}</text>`;
+      const t = a[0]+a[1]+a[2]+a[3]; if (t) g += `<text class="lbl" x="${(x+barw/2).toFixed(1)}" y="${(ys(t)-5).toFixed(1)}" text-anchor="middle">${fmt(t)}</text>`;
       g += `<rect x="${(P.l+bw*i).toFixed(1)}" y="${P.t}" width="${bw.toFixed(1)}" height="${ih}" fill="transparent" data-hit="${i}"/>`;
     });
     g += '</svg>';
@@ -434,42 +530,187 @@ tr.mark td:first-child{background:var(--exito-soft)}
     const svg = c.querySelector('svg');
     svg.querySelectorAll('[data-hit]').forEach(r => {
       r.addEventListener('mousemove', ev => { const i = +r.getAttribute('data-hit'); const a = e.y['2026'][i]; const rect = svg.getBoundingClientRect();
-        let html = `<b>${MESES[i]}/2026</b> · ${fmt(denom(a))} sentenças · êxito ${pct(rate(a),1)}<div class="row"><span><i style="background:var(--exito)"></i>improcedentes</span><span>${fmt(a[0])}</span></div><div class="row"><span><i style="background:var(--exito)"></i>extinções</span><span>${fmt(a[1])}</span></div><div class="row"><span><i style="background:var(--parc)"></i>parciais</span><span>${fmt(a[2])}</span></div><div class="row"><span><i style="background:var(--proc)"></i>procedentes</span><span>${fmt(a[3])}</span></div>`;
-        if (a[4]) html += `<div class="row"><span>acordos homologados</span><span>${fmt(a[4])}</span></div>`; if (a[5]) html += `<div class="row"><span>sem tipo</span><span>${fmt(a[5])}</span></div>`;
-        showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top); });
+        showTip(c, `<b>${MESES[i]}/__ANO__</b> · ${fmt(denom(a))} sentenças · êxito ${pct(rate(a),1)}` + linhasTip(a), ev.clientX-rect.left, ev.clientY-rect.top); });
       r.addEventListener('mouseleave', ()=>hideTip(c));
     });
   }
-  function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const f = v/p; const n = f<=1?1:f<=2?2:f<=2.5?2.5:f<=4?4:f<=5?5:f<=8?8:10; return n*p; }
 
-  // ---- tabelas heat ----
-  function heatClass(r){ if (r==null) return 'h0'; const lo=.30, hi=.90; const t = Math.max(0, Math.min(1, (r-lo)/(hi-lo))); return 'h'+(1+Math.min(6, Math.floor(t*7))); }
+  // ---- tabelas por cliente / projeto ----
+  function heatClass(r, m){ if (r==null) return 'h0'; const t = Math.max(0, Math.min(1, (r-m.lo)/(m.hi-m.lo))); return 'h'+(1+Math.min(6, Math.floor(t*7))); }
   function renderTable(id, rows, label){
-    const head = `<tr><th>${label}</th>${MESES.slice(0,LAST).map(m=>`<th>${m}</th>`).join('')}<th>set*</th><th class="sep">jan–ago 2026</th><th>jan–ago 2025</th><th class="sep">sentenças 2026</th><th>s/ tipo</th></tr>`;
-    const body = rows.map((e,idx)=>{
-      const cells = MESES.slice(0,LAST).map((_,i)=>{ const a = e.y['2026'][i]; const r = rate(a); return `<td class="heat ${heatClass(r)}" title="${e.name} · ${MESES[i]}/2026: ${fmt(a[0])} improc., ${fmt(a[1])} extinções, ${fmt(a[2])} parciais, ${fmt(a[3])} procedentes${a[4]?', '+fmt(a[4])+' acordos':''}">${pct(r,0)}<span class="n">${fmt(denom(a))}</span></td>`; }).join('');
-      const s = e.y['2026'][8]; const rs = rate(s);
+    const M = METR[metrica];
+    const head = `<tr><th>${label}</th>${MESES.slice(0,LAST).map(m=>`<th>${m}</th>`).join('')}<th>set*</th><th class="sep">__PERIODO_TH__</th><th>__PERIODO_TH_ANT__</th><th class="sep">sentenças __ANO__</th><th>s/ tipo</th></tr>`;
+    const body = rows.map(e=>{
+      const cells = MESES.slice(0,LAST).map((_,i)=>{ const a = e.y['2026'][i]; const r = M.fn(a);
+        return `<td class="heat ${heatClass(r,M)}" title="${esc(e.name)} · ${MESES[i]}/__ANO__: ${fmt(a[0])} improcedentes, ${fmt(a[1])} extinções (${fmt(a[6])} c/ advogado agressor), ${fmt(a[2])} parciais, ${fmt(a[3])} procedentes${a[4]?', '+fmt(a[4])+' acordos':''}">${pct(r,0)}<span class="n">${fmt(M.den(a))}</span></td>`; }).join('');
+      const s = e.y['2026'][8];
       const a26 = sumMonths(e.y['2026'],1,LAST), a25 = sumMonths(e.y['2025'],1,LAST);
       const semTipo = sumMonths(e.y['2026'],1,9)[5];
-      return `<tr class="${e.total?'total':''}"><td title="${e.name}">${e.name}</td>${cells}<td class="dim" title="setembro parcial">${pct(rs,0)}<span class="n">${fmt(denom(s))}</span></td><td class="sep heat ${heatClass(rate(a26))}">${pct(rate(a26),1)}</td><td class="dim">${pct(rate(a25),1)}<span class="n">${fmt(denom(a25))}</span></td><td class="sep">${fmt(denom(a26)+denom(s))}</td><td class="dim">${semTipo?fmt(semTipo):'–'}</td></tr>`;
+      return `<tr class="${e.total?'total':''}"><td title="${esc(e.name)}">${esc(limpo(e.name))}</td>${cells}<td class="dim" title="setembro parcial">${pct(M.fn(s),0)}<span class="n">${fmt(M.den(s))}</span></td><td class="sep heat ${heatClass(M.fn(a26),M)}">${pct(M.fn(a26),1)}<span class="n">${fmt(M.den(a26))}</span></td><td class="dim">${pct(M.fn(a25),1)}<span class="n">${fmt(M.den(a25))}</span></td><td class="sep">${fmt(denom(a26)+denom(s))}</td><td class="dim">${semTipo?fmt(semTipo):'–'}</td></tr>`;
     }).join('');
     document.getElementById(id).innerHTML = head + body;
   }
+  const allP = { name:'Santander (todos os projetos)', total:true, y:{ '2025': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
+  const mchips = document.getElementById('e-metric');
+  Object.entries(METR).forEach(([k,m]) => { const b = document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.k = k; b.textContent = m.label; b.addEventListener('click', ()=>{ metrica = k; renderTables(); }); mchips.appendChild(b); });
+  function renderTables(){
+    mchips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===metrica));
+    const M = METR[metrica];
+    document.getElementById('e-metric-note').textContent = M.nota;
+    renderTable('e-t-clients', entities, 'Cliente');
+    renderTable('e-t-projects', [allP, ...D.projects], 'Projeto');
+    document.getElementById('e-scale').innerHTML = `<span>${Math.round(M.lo*100)}%</span><span class="sw">${[1,2,3,4,5,6,7].map(i=>`<i style="background:var(--heat${i}-bg)"></i>`).join('')}</span><span>${Math.round(M.hi*100)}% ou mais</span>`;
+  }
+
+  // ---- UF e comarca ----
+  // linha geo: [cliente, comarca, improc, extincao, parcial, procedente, acordo, ext c/ adv. agressor, ext c/ agressor/contumaz]
+  const GC = 7;
+  const gden = v => v[0]+v[1]+v[2]+v[3]+v[4];
+  const nomeCom = i => G.com[i][0] + '/' + G.com[i][1];
+  const nomeUF = s => (G.ufs[s] || s) + ' (' + s + ')';
+  const COM_VOL = new Array(G.com.length).fill(0);
+  for (const r of G.rows) COM_VOL[r[1]] += r[2]+r[3]+r[4]+r[5]+r[6];
+  let geoDim = 'uf', geoBusca = '', geoLimite = 50, geoDestaque = null;
+  const gdim = document.getElementById('e-geodim');
+  [['uf','UF'],['com','Comarca']].forEach(([k,l]) => { const b = document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.k = k; b.textContent = l;
+    b.addEventListener('click', ()=>{ geoDim = k; geoLimite = 50; geoDestaque = null; renderGeo(); }); gdim.appendChild(b); });
+  function geoAgg(cliente){
+    const ci = cliente==='Todos' ? -1 : G.cli.indexOf(cliente);
+    const mapa = new Map();
+    for (const r of G.rows) {
+      if (ci>=0 && r[0]!==ci) continue;
+      const key = geoDim==='uf' ? G.com[r[1]][1] : r[1];
+      let v = mapa.get(key); if (!v) { v = new Array(GC).fill(0); mapa.set(key, v); }
+      for (let i=0; i<GC; i++) v[i] += r[2+i];
+    }
+    return [...mapa.entries()].map(([k,v]) => ({k, nome: geoDim==='uf' ? nomeUF(k) : nomeCom(k), v}))
+      .filter(l => gden(l.v) > 0).sort((a,b) => gden(b.v)-gden(a.v));
+  }
+  function renderGeo(){
+    gdim.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===geoDim));
+    document.getElementById('e-t-geo-h').textContent = (geoDim==='uf' ? 'Por UF' : 'Por comarca') + ' · ' + limpo(sel);
+    const linhas = geoAgg(sel);
+    const b = geoBusca ? ' ' + geoBusca : '';
+    const vis = b ? linhas.filter(l => (' ' + achatar(l.nome) + ' ').includes(b)) : linhas;
+    const hm = METR.exito;
+    document.getElementById('e-t-geo').innerHTML =
+        `<tr><th>${geoDim==='uf' ? 'UF' : 'Comarca/UF'}</th><th>Sentenças</th><th class="sep">Êxito</th><th>Improcedência</th><th>Extinção</th><th>Procedência<br>total + parcial</th><th class="sep">Extinções c/<br>advogado agressor</th></tr>`
+      + (vis.length ? vis.slice(0, geoLimite).map(l => { const d = gden(l.v), ex = d ? (l.v[0]+l.v[1])/d : null;
+          return `<tr class="${geoDestaque!=null && l.k===geoDestaque ? 'mark' : ''}"><td title="${esc(l.nome)}">${esc(l.nome)}</td><td>${fmt(d)}</td>`
+            + `<td class="sep heat ${heatClass(ex, hm)}">${pct(ex,0)}</td><td>${pct(d?l.v[0]/d:null,0)}</td><td>${pct(d?l.v[1]/d:null,0)}</td><td>${pct(d?(l.v[2]+l.v[3])/d:null,0)}</td>`
+            + `<td class="sep">${fmt(l.v[5])}<span class="n">${l.v[1] ? pct(l.v[5]/l.v[1],0)+' das extinções' : ''}</span></td></tr>`; }).join('')
+        : `<tr><td colspan="7" style="text-align:left">Nenhuma ${geoDim==='uf' ? 'UF' : 'comarca'} com esse filtro${sel!=='Todos' ? ' para ' + esc(limpo(sel)) : ''}.</td></tr>`);
+    const mostr = Math.min(geoLimite, vis.length);
+    document.getElementById('e-geo-cont').textContent = vis.length ? `Mostrando ${fmt(mostr)} de ${fmt(vis.length)}.` : '';
+    document.getElementById('e-geo-mais').hidden = mostr >= vis.length;
+  }
+  let tGeo = null;
+  const geoInput = document.getElementById('e-geo-q');
+  geoInput.addEventListener('input', ev => { clearTimeout(tGeo); tGeo = setTimeout(()=>{ geoBusca = achatar(ev.target.value); geoLimite = 50; renderGeo(); }, 150); });
+  document.getElementById('e-geo-mais').addEventListener('click', ()=>{ geoLimite += 50; renderGeo(); });
+
+  // ---- pergunta ----
+  function citaUF(texto, sig, nome){
+    const tp = ' ' + achatar(texto) + ' ';
+    const n = achatar(nome);
+    let porNome;
+    if (n === 'para') porNome = /(^|[^a-zà-ÿ])pará([^a-zà-ÿ]|$)/i.test(texto) || tp.includes(' estado do para ');
+    else porNome = n.length >= 4 && tp.includes(' ' + n + ' ');
+    const porSigla = new RegExp('(^|[^A-Za-zÀ-ÿ])' + sig + '([^A-Za-zÀ-ÿ]|$)').test(texto);
+    return porNome || porSigla;
+  }
+  const COM_ACH = G.com.map(c => achatar(c[0]));
+  const UFS_ORD = Object.entries(G.ufs).filter(([s]) => s !== '??').sort((a,b) => b[1].length - a[1].length);  // "Mato Grosso do Sul" antes de "Mato Grosso"
+  function interpretar(texto){
+    const tp = ' ' + achatar(texto) + ' ';
+    const r = {metrica:'exito'};
+    if (/ agressor| agressiv| predat/.test(tp)) r.metrica = 'agr';
+    else if (/ extin/.test(tp)) r.metrica = 'ext';
+    else if (/ improced/.test(tp)) r.metrica = 'improc';
+    for (const c of D.clients) if (tp.includes(' ' + achatar(limpo(c.name)) + ' ')) { r.cliente = c.name; break; }
+    if (!r.cliente) for (const c of D.clients) { const w = achatar(limpo(c.name)).split(' ')[0]; if (w.length >= 3 && tp.includes(' ' + w + ' ')) { r.cliente = c.name; break; } }
+    if (/ todos os clientes | carteira toda | geral /.test(tp)) r.cliente = 'Todos';
+    for (const [sig, nome] of UFS_ORD) if (citaUF(texto, sig, nome)) { r.uf = sig; break; }
+    // comarca: o nome mais longo citado; empate de nome entre UFs fica com a UF citada ou a de maior volume
+    let best = -1, bestLen = 0;
+    COM_ACH.forEach((a, i) => {
+      if (a.length < 3 || a.length < bestLen || !tp.includes(' ' + a + ' ')) return;
+      if (r.uf && G.com[i][1] !== r.uf) return;
+      if (a.length > bestLen || COM_VOL[i] > COM_VOL[best]) { best = i; bestLen = a.length; }
+    });
+    const pedeComarca = / comarca | cidade | municipio /.test(tp);
+    if (best >= 0) {
+      const mesmoNomeDaUF = r.uf && achatar(G.ufs[r.uf] || '') === COM_ACH[best];
+      if (!mesmoNomeDaUF || pedeComarca) { r.com = best; if (!r.uf) r.uf = G.com[best][1]; }
+    }
+    return r;
+  }
+  const MG = {
+    exito:  {label:'êxito', fn:v=>gden(v)?(v[0]+v[1])/gden(v):null, den:gden, alvo:'sentenças'},
+    improc: {label:'improcedência', fn:v=>gden(v)?v[0]/gden(v):null, den:gden, alvo:'sentenças'},
+    ext:    {label:'extinção', fn:v=>gden(v)?v[1]/gden(v):null, den:gden, alvo:'sentenças'},
+    agr:    {label:'extinções com advogado agressor', fn:v=>v[1]?v[5]/v[1]:null, den:v=>v[1], alvo:'extinções'},
+  };
+  function somaGeo(cliente, uf, com){
+    const ci = cliente==='Todos' ? -1 : G.cli.indexOf(cliente);
+    const v = new Array(GC).fill(0), resto = new Array(GC).fill(0);
+    for (const r of G.rows) {
+      if (ci>=0 && r[0]!==ci) continue;
+      const dentro = com!=null ? r[1]===com : (uf ? G.com[r[1]][1]===uf : true);
+      const alvo = dentro ? v : resto;
+      for (let i=0; i<GC; i++) alvo[i] += r[2+i];
+    }
+    return {v, resto};
+  }
+  function responder(r){
+    const out = document.getElementById('e-out');
+    const cliente = sel, nomeCli = cliente==='Todos' ? 'todos os clientes' : esc(limpo(cliente));
+    const onde = r.com!=null ? nomeCom(r.com) : (r.uf ? nomeUF(r.uf) : 'todas as UFs');
+    const M = MG[r.metrica];
+    const {v, resto} = somaGeo(cliente, r.uf, r.com);
+    const d = gden(v);
+    let html = `<div class="askread">Li: <b>${M.label}</b> · ${nomeCli} · ${esc(onde)} · __PERIODO__</div>`;
+    if (!M.den(v)) {
+      html += `<p class="askvazio">Não há ${M.alvo} de ${nomeCli} em <b>${esc(onde)}</b> no período.`
+        + (cliente!=='Todos' ? ` <button type="button" class="linkbtn" id="e-ask-todos">Ver em todos os clientes</button>` : '') + `</p>`;
+    } else {
+      const taxa = M.fn(v), base = (r.uf || r.com!=null) ? M.fn(resto) : null;
+      html += `<div class="askcard"><div class="askcard-h">${esc(onde)} · ${cliente==='Todos' ? 'Todos os clientes' : esc(limpo(cliente))}</div>`
+        + `<div class="askcard-v">${pct(taxa,1)}<span> de ${M.label} em ${fmt(M.den(v))} ${M.alvo}</span></div>`
+        + `<p>Improcedência <b>${pct(d?v[0]/d:null,0)}</b> · extinção <b>${pct(d?v[1]/d:null,0)}</b> · procedência total + parcial <b>${pct(d?(v[2]+v[3])/d:null,0)}</b>, em ${fmt(d)} sentenças.</p>`
+        + `<p>Das ${fmt(v[1])} extinções, <b>${fmt(v[5])}</b> têm advogado adverso agressor${v[1] ? ' (' + pct(v[5]/v[1],0) + ')' : ''}.</p>`
+        + (base!=null ? `<p>No resto ${cliente==='Todos' ? 'da carteira' : 'de ' + esc(limpo(cliente))}: <b>${pct(base,1)}</b> de ${M.label}.</p>` : '')
+        + (M.den(v) < 30 ? `<p class="askic">Com ${fmt(M.den(v))} ${M.alvo}, a amostra é pequena: leia como indicação, não como tendência.</p>` : '')
+        + `</div>`;
+    }
+    out.innerHTML = html; out.hidden = false;
+    const todos = document.getElementById('e-ask-todos');
+    if (todos) todos.addEventListener('click', () => { sel = 'Todos'; render(); responder(r); });
+  }
+  function perguntar(){
+    const texto = document.getElementById('e-q').value.trim();
+    if (!texto) return;
+    const r = interpretar(texto);
+    if (r.cliente) sel = r.cliente;
+    if (r.com != null) { geoDim = 'com'; geoDestaque = r.com; geoBusca = COM_ACH[r.com]; geoInput.value = G.com[r.com][0]; }
+    else if (r.uf) { geoDim = 'uf'; geoDestaque = r.uf; geoBusca = ''; geoInput.value = ''; }
+    else { geoDestaque = null; }
+    geoLimite = 50;
+    render();
+    responder(r);
+  }
+  document.getElementById('e-go').addEventListener('click', perguntar);
+  document.getElementById('e-q').addEventListener('keydown', ev => { if (ev.key === 'Enter') perguntar(); });
 
   function render(){
     chips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed', b.textContent===sel));
     const e = entities.find(x=>x.name===sel) || allClients;
-    document.getElementById('e-t-rate').textContent = 'Taxa de êxito mensal · ' + e.name;
-    document.getElementById('e-t-vol').textContent = 'Sentenças por mês e resultado · ' + e.name;
+    document.getElementById('e-t-rate').textContent = 'Êxito mensal · ' + limpo(e.name);
+    document.getElementById('e-t-vol').textContent = 'Sentenças por mês e resultado · ' + limpo(e.name);
     document.getElementById('e-lg-2025').style.display = cmp ? '' : 'none';
-    renderKpis(e); renderRate(e); renderVol(e);
+    renderKpis(e); renderRate(e); renderVol(e); renderGeo();
   }
-  allClients.total = true;
-  renderTable('e-t-clients', entities, 'Cliente');
-  const allP = { name:'Santander (todos os projetos)', y:{ '2025': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2025'][i]),zero())), '2026': Array.from({length:12},(_,i)=>D.projects.reduce((s,c)=>add(s,c.y['2026'][i]),zero())) } };
-  allP.total = true; allClients.total = true;
-  renderTable('e-t-projects', [allP, ...D.projects], 'Projeto');
-  render();
+  renderTables(); render();
 })();
 </script>
 
@@ -478,9 +719,9 @@ tr.mark td:first-child{background:var(--exito-soft)}
   <header>
     <div>
       <h2 class="ptitle">Reversão recursal</h2>
-      <p class="sub">Dos casos em que <b>nós</b> interpusemos recurso, quantos tiveram a decisão mudada a nosso favor. Acórdãos de 2026, por mês e por cliente.</p>
+      <p class="sub">Dos casos em que <b>nós</b> interpusemos recurso, quantos tiveram a decisão mudada a nosso favor. Acórdãos de __ANO__, por mês e por cliente.</p>
     </div>
-    <div class="meta">Dados do MMP em <b id="r-asof"></b><br>Meses fechados: <b>jan–ago/2026</b> · setembro parcial<br>Comparativo com 2025 <b>desligado</b>: convenção de registro diferente até ago/25</div>
+    <div class="meta">Dados do MMP em <b id="r-asof"></b><br>Meses fechados: <b>__PERIODO__</b> · __MES_PARCIAL__ parcial<br>Comparativo com __ANO_ANT__ <b>desligado</b>: convenção de registro diferente até ago/25</div>
   </header>
 
   <div class="def-strip">
@@ -498,18 +739,18 @@ tr.mark td:first-child{background:var(--exito-soft)}
 
   <div class="grid2">
     <div class="card">
-      <div class="h"><h2 id="r-t-rate">Reversão recursal por mês</h2><span class="note">jan–ago · só recursos nossos</span></div>
+      <div class="h"><h2 id="r-t-rate">Reversão recursal por mês</h2><span class="note">__PERIODO_CURTO__ · só recursos nossos</span></div>
       <div class="chart" id="r-c-rate"></div>
       <div class="legend"><span><i class="line"></i>Reversão recursal — recursos nossos que mudaram a decisão</span><span id="r-lg-2025"><i class="dash"></i>2025, mesmo mês</span></div>
     </div>
     <div class="card">
-      <div class="h"><h2 id="r-t-vol">Recursos nossos por mês</h2><span class="note">jan–ago · quantidade de acórdãos</span></div>
+      <div class="h"><h2 id="r-t-vol">Recursos nossos por mês</h2><span class="note">__PERIODO_CURTO__ · quantidade de acórdãos</span></div>
       <div class="chart" id="r-c-vol"></div>
-      <div class="legend"><span><i style="background:var(--exito)"></i>Mudou a decisão a favor</span><span><i style="background:var(--parc)"></i>Manteve a condenação</span></div>
+      <div class="legend"><span><i style="background:var(--exito)"></i>Mudou para improcedência</span><span><i style="background:var(--ext)"></i>Mudou para extinção</span><span><i style="background:var(--parc)"></i>Manteve a condenação</span></div>
     </div>
   </div>
 
-  <div class="section"><h2 id="r-t-rec">Recurso nosso × recurso do adversário</h2><span class="note">jan–ago/2026. São duas coisas diferentes e o indicador antigo somava as duas.</span></div>
+  <div class="section"><h2 id="r-t-rec">Recurso nosso × recurso do adversário</h2><span class="note">__PERIODO__. São duas coisas diferentes e o indicador antigo somava as duas.</span></div>
   <div class="recgrid" id="r-rec"></div>
 
   <div class="section" style="align-items:center">
@@ -520,10 +761,10 @@ tr.mark td:first-child{background:var(--exito-soft)}
   <div class="tablewrap"><table id="r-t-clients"></table></div>
   <div class="scale" id="r-scale" style="margin-top:8px"></div>
 
-  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com mais acórdãos em 2026; os demais em "Outros projetos". Mesma métrica selecionada acima.</span></div>
+  <div class="section"><h2>Santander por projeto do caso</h2><span class="note">Projetos com mais acórdãos em __ANO__; os demais em "Outros projetos". Mesma métrica selecionada acima.</span></div>
   <div class="tablewrap"><table id="r-t-projects"></table></div>
 
-  <div class="section"><h2>Quanto disto dá para auditar</h2><span class="note">Só é possível conferir o resultado gravado contra o acórdão quando o inteiro teor está no sistema. Em 2026 a cobertura é boa; nos anos anteriores, não.</span></div>
+  <div class="section"><h2>Quanto disto dá para auditar</h2><span class="note">Só é possível conferir o resultado gravado contra o acórdão quando o inteiro teor está no sistema. Em __ANO__ a cobertura é boa; nos anos anteriores, não.</span></div>
   <div class="cov" id="r-cov"></div>
 
   <div class="defs">
@@ -531,6 +772,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
     <p><b>Fonte:</b> caso (<code>dossie.dossie</code>) com <code>data_acordao</code> no mês, agrupado por <code>grupo_id</code> (cliente) ou <code>projeto_id</code> (projeto). Cada caso conta uma vez; inclui casos arquivados.</p>
     <p><b>Quem recorreu</b> vem de <code>dossie_recurso</code>. "Recurso nosso" reúne <i>parte representada</i> e <i>ambas as partes</i>. <b>Atenção:</b> o campo está vazio em parte dos casos, que ficam fora da conta de reversão recursal — é a maior fragilidade deste painel.</p>
     <p><b>Classes:</b> <i>favorável</i> = Improcedente ou Extinção; <i>desfavorável</i> = Procedente ou Parcialmente Procedente. Mudança de tipo dentro da mesma classe (Parcial → Procedente, que o MMP usa para "condenação mantida") não conta como reversão.</p>
+    <p><b>Improcedência × extinção:</b> improcedência é decisão de mérito; extinção encerra sem julgar o mérito. As <i>vitórias mantidas</i> são separadas pelo tipo da sentença que o tribunal manteve. As <i>reversões a favor</i> só podem ser separadas pelo resultado gravado após o acórdão (<code>tipo_sentenca_modificada_id</code>), e esse campo tende a registrar "Improcedente" mesmo quando há extinção: das __FFEXT__ extinções mantidas em __PERIODO__, __FFEXTIMPROC__ estão gravadas como improcedência. Por isso, o número de reversões “para extinção” provavelmente está subestimado. <b>Advogado agressor:</b> extinção em caso com o campo <i>Tem Advogado Agressor</i> marcado (<code>has_advogado_adverso_agressor</code>).</p>
     <p><b>Êxito em 2º grau</b> (métrica antiga, mantida para referência) = acórdãos que terminam favoráveis ÷ todos os classificáveis, <i>independente de quem recorreu</i>. Fica muito acima da reversão recursal porque inclui as sentenças que já eram favoráveis e apenas foram mantidas.</p>
     <p><b>Atenção ao 2025:</b> até agosto de 2025 o campo "sentença modificada" seguia outra convenção — "Procedente" indicava <i>recurso provido</i>, não o resultado do caso — e parte desses registros foi ajustada em lote em março e setembro de 2026. Por isso o comparativo vem desligado.</p>
     <p><b>Auditoria por leitura dos acórdãos:</b> uma checagem automática do inteiro teor contra o resultado gravado está em andamento e <b>não</b> alimenta os números acima. Os apontamentos dela ainda têm precisão baixa (cerca de 1 em 3 confirmados em leitura manual) e não devem corrigir o indicador enquanto a validação não fechar.</p>
@@ -548,7 +790,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
   const pct = (r, d=0) => r==null ? '\u2013' : (r*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
   document.getElementById('r-asof').textContent = D.asOf;
 
-  const zero = () => [0,0,0,0,0];
+  const zero = () => [0,0,0,0,0,0,0,0,0,0,0,0,0];
   const add = (a,b) => a.map((v,i)=>v+(b[i]||0));
   const sumM = (arr,m1,m2) => { let s = zero(); for (let m=m1;m<=m2;m++) s = add(s, arr[m-1]); return s; };
   const classif = a => a[0]+a[1]+a[2]+a[3];
@@ -591,8 +833,8 @@ tr.mark td:first-child{background:var(--exito-soft)}
     const d = (rv!=null && rv25!=null) ? (rv-rv25)*100 : null;
     const delta = d==null ? '' : ' · <span class="'+(d>=0?'delta-up':'delta-down')+'">'+(d>=0?'\u25b2':'\u25bc')+' '+Math.abs(d).toLocaleString('pt-BR',{maximumFractionDigits:1})+' p.p.</span> vs 2025';
     const k = [
-      {l:'Reversão recursal · jan–ago/2026', v:pct(rv,1), hero:true,
-       d:'<b>'+fmt(n26[2])+'</b> de '+fmt(n26[2]+n26[3])+' recursos nossos mudaram a decisão'+(cmp?delta:'')},
+      {l:'Reversão recursal · __PERIODO__', v:pct(rv,1), hero:true,
+       d:'<b>'+fmt(n26[2])+'</b> de '+fmt(n26[2]+n26[3])+' recursos nossos mudaram a decisão'+(n26[2]?': '+fmt(n26[5])+' para improcedência, '+fmt(n26[6])+' para extinção'+(n26[6]?' ('+fmt(n26[9])+' com advogado agressor)':''):'')+(cmp?delta:'')},
       {l:'Recursos nossos julgados', v:fmt(classif(n26)+n26[4]), d:'acórdãos em que recorremos'},
       {l:'Mantiveram a condenação', v:fmt(n26[3]), d:pct(n26[2]+n26[3]?n26[3]/(n26[2]+n26[3]):null,0)+' dos nossos recursos'},
       {l:'Êxito em 2º grau (todos)', v:pct(rExito(t26),1), d:'métrica antiga · '+fmt(classif(t26))+' acórdãos, qualquer recorrente'},
@@ -629,7 +871,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
       const i = Math.max(0, Math.min(LAST-1, Math.round((sx-P.l)/iw*(LAST-1))));
       xh.setAttribute('x1', xs(i)); xh.setAttribute('x2', xs(i)); xh.style.display='';
       const a = e.nos['2026'][i];
-      let html = '<b>'+MESES[i]+'/2026</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><b>'+fmt(a[2])+'</b></div><div class="row"><span>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
+      let html = '<b>'+MESES[i]+'/__ANO__</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><b>'+fmt(a[2])+'</b></div><div class="row"><span>&nbsp;&nbsp;&nbsp;para improcedência</span><span>'+fmt(a[5])+'</span></div><div class="row"><span>&nbsp;&nbsp;&nbsp;para extinção</span><span>'+fmt(a[6])+(a[9]?' · '+fmt(a[9])+' c/ adv. agressor':'')+'</span></div><div class="row"><span>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
       if (cmp) html += '<div class="row" style="margin-top:4px;opacity:.8"><span>'+MESES[i]+'/2025</span><span>'+pct(rRev(e.nos['2025'][i]),0)+'</span></div>';
       showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top);
     });
@@ -650,7 +892,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
     g += ticks.map(t=>'<text x="'+(P.l-6)+'" y="'+(ys(t)+4)+'" text-anchor="end">'+fmt(Math.round(t))+'</text>').join('');
     months.forEach((a,i)=>{
       const x = P.l + bw*i + (bw-barw)/2;
-      const segs = [[a[2],'var(--exito)'],[a[3],'var(--parc)']];
+      const segs = [[a[2]-a[6],'var(--exito)'],[a[6],'var(--ext)'],[a[3],'var(--parc)']];
       let y0 = 0, topK = -1; segs.forEach(([v],k)=>{ if (v) topK = k; });
       segs.forEach(([v,col],k)=>{ if(!v) return; const y1 = ys(y0), y2 = ys(y0+v); const h = Math.max(0, y1-y2-2);
         g += '<rect x="'+x.toFixed(1)+'" y="'+(y2+1).toFixed(1)+'" width="'+barw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+col+'" rx="'+(k===topK?3:0)+'"/>'; y0 += v; });
@@ -663,7 +905,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
     const svg = c.querySelector('svg');
     svg.querySelectorAll('[data-hit]').forEach(r => {
       r.addEventListener('mousemove', ev => { const i = +r.getAttribute('data-hit'); const a = e.nos['2026'][i]; const rect = svg.getBoundingClientRect();
-        const html = '<b>'+MESES[i]+'/2026</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><span>'+fmt(a[2])+'</span></div><div class="row"><span><i style="background:var(--parc)"></i>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
+        const html = '<b>'+MESES[i]+'/__ANO__</b> · recursos nossos<div class="row"><span><i style="background:var(--exito)"></i>mudou a decisão</span><span>'+fmt(a[2])+'</span></div><div class="row"><span>&nbsp;&nbsp;&nbsp;para improcedência</span><span>'+fmt(a[5])+'</span></div><div class="row"><span>&nbsp;&nbsp;&nbsp;para extinção</span><span>'+fmt(a[6])+(a[9]?' · '+fmt(a[9])+' c/ adv. agressor':'')+'</span></div><div class="row"><span><i style="background:var(--parc)"></i>manteve a condenação</span><span>'+fmt(a[3])+'</span></div><div class="row"><span>reversão recursal</span><b>'+pct(rRev(a),1)+'</b></div>';
         showTip(c, html, ev.clientX-rect.left, ev.clientY-rect.top); });
       r.addEventListener('mouseleave', ()=>hideTip(c));
     });
@@ -674,9 +916,9 @@ tr.mark td:first-child{background:var(--exito-soft)}
     const outros = t.map((v,i)=>v-n[i]);
     const cards = [
       {t:'Recorremos nós', a:n, mine:true, sub:'parte representada ou ambas as partes',
-       line:a => '<b style="color:var(--exito)">'+pct(rRev(a),1)+'</b> dos '+fmt(a[2]+a[3])+' com sentença contra tiveram a decisão mudada'},
+       line:a => '<b style="color:var(--exito)">'+pct(rRev(a),1)+'</b> dos '+fmt(a[2]+a[3])+' com sentença contra tiveram a decisão mudada: '+fmt(a[5])+' para improcedência, '+fmt(a[6])+' para extinção'},
       {t:'Recorreu o adversário ou não consta', a:outros, sub:'inclui os casos sem registro de quem recorreu',
-       line:a => fmt(a[0])+' vitórias de 1º grau mantidas · <b style="color:var(--proc)">'+pct(rContra(a),1)+'</b> perdidas no acórdão'},
+       line:a => fmt(a[0])+' vitórias de 1º grau mantidas ('+fmt(a[7])+' improcedência, '+fmt(a[8])+' extinção) · <b style="color:var(--proc)">'+pct(rContra(a),1)+'</b> perdidas no acórdão'},
     ];
     document.getElementById('r-rec').innerHTML = cards.map(c => {
       const a = c.a, tot = classif(a) || 1;
@@ -697,11 +939,11 @@ tr.mark td:first-child{background:var(--exito-soft)}
   function heatClass(r, m){ if (r==null) return 'h0'; const t = Math.max(0, Math.min(1, (r-m.lo)/(m.hi-m.lo))); return (m.ramp==='r'?'r':'h')+(1+Math.min(6, Math.floor(t*7))); }
   function renderTable(id, rows, label){
     const m = METRICS[metric];
-    const head = '<tr><th>'+label+'</th>'+MESES.slice(0,LAST).map(x=>'<th>'+x+'</th>').join('')+'<th>set*</th><th class="sep">jan–ago 2026</th><th>jan–ago 2025</th></tr>';
+    const head = '<tr><th>'+label+'</th>'+MESES.slice(0,LAST).map(x=>'<th>'+x+'</th>').join('')+'<th>set*</th><th class="sep">__PERIODO_TH__</th><th>__PERIODO_TH_ANT__</th></tr>';
     const body = rows.map(e=>{
       const src = e[m.src];
       const cells = MESES.slice(0,LAST).map((_,i)=>{ const a = src['2026'][i]; const r = m.fn(a);
-        return '<td class="heat '+heatClass(r,m)+'" title="'+e.name+' · '+MESES[i]+'/2026">'+pct(r,0)+'<span class="n">'+fmt(m.den(a))+'</span></td>'; }).join('');
+        return '<td class="heat '+heatClass(r,m)+'" title="'+e.name+' · '+MESES[i]+'/__ANO__">'+pct(r,0)+'<span class="n">'+fmt(m.den(a))+'</span></td>'; }).join('');
       const s = src['2026'][8];
       const a26 = sumM(src['2026'],1,LAST), a25 = sumM(src['2025'],1,LAST);
       return '<tr class="'+(e.total?'total':'')+'"><td title="'+e.name+'">'+e.name+'</td>'+cells+'<td class="dim">'+pct(m.fn(s),0)+'<span class="n">'+fmt(m.den(s))+'</span></td><td class="sep heat '+heatClass(m.fn(a26),m)+'">'+pct(m.fn(a26),1)+'<span class="n">'+fmt(m.den(a26))+'</span></td><td class="dim">'+pct(m.fn(a25),1)+'<span class="n">'+fmt(m.den(a25))+'</span></td></tr>';
@@ -906,7 +1148,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
       }
       const den = M.den(acc), num = M.num(acc);
       if (!den) continue;
-      saida.push({chave:item.k, nome:item.n || item.k, uf:item.uf || (dimensao==='uf' ? item.k : ''), den, num});
+      saida.push({chave:item.k, nome:(dimensao==='comarca' && item.uf) ? item.k+'/'+item.uf : (item.n || item.k), uf:item.uf || (dimensao==='uf' ? item.k : ''), den, num});
     }
     const totalDen = saida.reduce((s,c)=>s+c.den, 0);
     const totalNum = saida.reduce((s,c)=>s+c.num, 0);
@@ -1031,7 +1273,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
 
   function cartaoHTML(p, curto){
     const M = METRICAS[metrica];
-    let html = `<b>${p.nome}</b>${p.uf && p.uf !== p.chave ? ' · '+p.uf : ''}`
+    let html = `<b>${p.nome}</b>`
       + `<div class="row"><span>${M.label}</span><b>${pct(p.taxa)}</b></div>`
       + `<div class="row"><span>${M.alvo}</span><span>${fmt(p.den)}</span></div>`;
     if (p.bench != null) html += `<div class="row"><span>demais recortes</span><span>${pct(p.bench)}</span></div>`;
@@ -1056,7 +1298,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
         ? `<span class="potbar"><i style="width:${Math.min(100, p.potencial / Math.max(1, ordenados[0].potencial) * 100).toFixed(1)}%"></i></span>`
         : '';
       return `<tr class="${destaque && p.chave===destaque ? 'mark' : ''}">`
-        + `<td title="${p.nome}">${p.nome}${p.uf && p.uf !== p.chave ? ` <span class="ufbadge">${p.uf}</span>` : ''}`
+        + `<td title="${p.nome}">${p.nome}`
         + (pequena ? ' <span class="tag">amostra pequena</span>' : '') + '</td>'
         + `<td>${fmt(p.den)}</td>`
         + `<td class="${p.gap > 0 ? 'ruim' : 'bom'}">${pct(p.taxa)}`
@@ -1081,6 +1323,22 @@ tr.mark td:first-child{background:var(--exito-soft)}
   }
   // texto sem acento, sem pontua\u00e7\u00e3o e com espa\u00e7os simples \u2014 para casar nomes compostos
   function achatar(s){ return normalizar(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim(); }
+  // a UF so conta como citada pelo NOME inteiro (palavra) ou pela SIGLA em maiusculas.
+  // 'Pará' sem acento vira 'para', a preposicao — so vale com acento ou 'estado do Para'.
+  function citaUF(texto, item){
+    const tp = ' ' + achatar(texto) + ' ';
+    const nome = achatar(item.n || item.k);
+    let porNome;
+    // \b do JS trata "á" como nao-letra: fronteira explicita, senao "Pará " nunca casa
+    if (nome === 'para') porNome = /(^|[^a-zà-ÿ])pará([^a-zà-ÿ]|$)/i.test(texto) || tp.includes(' estado do para ');
+    else porNome = nome.length >= 4 && tp.includes(' ' + nome + ' ');
+    const porSigla = new RegExp('(^|[^A-Za-zÀ-ÿ])' + item.k + '([^A-Za-zÀ-ÿ]|$)').test(texto);
+    return porNome || porSigla;
+  }
+  function citaNome(texto, nome){
+    const n = achatar(nome);
+    return n.length >= 3 && (' ' + achatar(texto) + ' ').includes(' ' + n + ' ');
+  }
 
   // apelidos de projeto: o nome inteiro e, quando o peda\u00e7o s\u00f3 aparece num projeto, o peda\u00e7o solto
   const ALIAS_PROJ = (() => {
@@ -1130,8 +1388,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
     // se a pergunta cita uma UF, guarda: vira foco (dimensão UF) ou filtro (comarca)
     let ufCitada = null;
     for (const item of (D.dims.uf ? D.dims.uf.itens : [])) {
-      const nome = normalizar(item.n || item.k);
-      if (t.includes(nome) || new RegExp('\\b' + normalizar(item.k) + '\\b').test(t)) { ufCitada = item.k; break; }
+      if (citaUF(texto, item)) { ufCitada = item.k; break; }
     }
     // procura o recorte citado, começando pela dimensão que a pergunta pediu
     const ordem = r.dimensao ? [r.dimensao, ...Object.keys(D.dims).filter(d => d !== r.dimensao)]
@@ -1142,10 +1399,8 @@ tr.mark td:first-child{background:var(--exito-soft)}
     for (const dim of ordem) {
       if (dim === 'uf' && r.dimensao && r.dimensao !== 'uf') continue;
       for (const item of D.dims[dim].itens) {
-        const nome = normalizar(item.n || item.k);
-        if (nome.length < 3) continue;
         if (usadoNoProjeto.has(achatar(item.n || item.k))) continue;
-        if (t.includes(nome) || (dim === 'uf' && new RegExp('\\b' + normalizar(item.k) + '\\b').test(t))) {
+        if (dim === 'uf' ? citaUF(texto, item) : citaNome(texto, item.n || item.k)) {
           r.foco = item.k; r.dimensao = dim; break;
         }
       }
@@ -1229,7 +1484,7 @@ tr.mark td:first-child{background:var(--exito-soft)}
       } else {
         const posicao = [...dados.celulas].sort((a,b)=>b.potencial-a.potencial).findIndex(c=>c.chave===foco) + 1;
         const pequena = p.den < PISO_AMOSTRA;
-        html += `<div class="askcard"><div class="askcard-h">${p.nome}${p.uf && p.uf!==p.chave ? ' · '+p.uf : ''} · ${rotuloCliente()}</div>`
+        html += `<div class="askcard"><div class="askcard-h">${p.nome} · ${rotuloCliente()}</div>`
           + `<div class="askcard-v">${pct(p.taxa)}<span> de ${M.label.toLowerCase()} em ${fmt(p.den)} ${M.alvo}</span></div>`
           + `<p>Os demais recortes somam <b>${pct(p.bench)}</b>. `
           + (p.potencial > 0
@@ -1280,15 +1535,23 @@ tr.mark td:first-child{background:var(--exito-soft)}
     if (!texto) return;
     const botao = document.getElementById('a-go');
     botao.disabled = true; botao.textContent = 'Consultando…';
-    let filtro = await interpretarComClaude(texto);
-    let viaClaude = !!filtro;
-    if (!filtro) filtro = interpretarLocal(texto);
-    const foco = aplicar(filtro);
-    pintarChips(); pintarTitulos();
-    const dados = celulas();
-    renderKpis(dados); renderScatter(dados, foco); renderTabela(dados, foco);
-    responder(dados, foco, filtro.explicacao || null, viaClaude);
-    botao.disabled = false; botao.textContent = 'Consultar';
+    const comPrazo = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r(null), ms))]);
+    try {
+      let filtro = await comPrazo(interpretarComClaude(texto).catch(() => null), 8000);
+      let viaClaude = !!filtro;
+      if (!filtro) filtro = interpretarLocal(texto);
+      const foco = aplicar(filtro);
+      pintarChips(); pintarTitulos();
+      const dados = celulas();
+      renderKpis(dados); renderScatter(dados, foco); renderTabela(dados, foco);
+      responder(dados, foco, filtro.explicacao || null, viaClaude);
+    } catch (e) {
+      const out = document.getElementById('a-out');
+      out.innerHTML = '<p class="askvazio">Não consegui interpretar essa pergunta. Tente citar o cliente e o recorte, como “reversão do Santander por UF”.</p>';
+      out.hidden = false;
+    } finally {
+      botao.disabled = false; botao.textContent = 'Consultar';
+    }
   }
 
   document.getElementById('a-go').addEventListener('click', consultar);
@@ -1336,9 +1599,170 @@ tr.mark td:first-child{background:var(--exito-soft)}
 </script>
 
 
+<div class="panel" id="panel-ganhei" hidden>
+  <header>
+    <div>
+      <h2 class="ptitle">Recorri e ganhei</h2>
+      <p class="sub">Casos em que <b>nós</b> recorremos de sentença desfavorável e o acórdão mudou a decisão a nosso favor.</p>
+    </div>
+    <div class="meta">Dados do MMP em <b id="rl-ganhei-asof"></b><br>Taxa: <b>__PERIODO__</b> · lista: <b>__ANO__</b></div>
+  </header>
+  <div class="def-strip"><b>Recorri</b> = o caso tem tarefa de <b>Apelação</b>, <b>Inominado</b> ou <b>Preparo</b>. <b>Ganhei</b> = a sentença era desfavorável (procedente ou parcialmente procedente) e, depois do acórdão, ficou favorável (improcedente ou extinção).</div>
+  <div class="controls">
+    <span class="eyebrow">Cliente</span>
+    <div class="chips" id="rl-ganhei-chips" role="group" aria-label="Filtrar por cliente"></div>
+  </div>
+  <div class="kpis rl-k3" id="rl-ganhei-kpis"></div>
+  <div class="section"><h2>Por cliente</h2><span class="note">Casos na lista = __ANO__. Taxa = __PERIODO__, sobre os recursos nossos contra sentença desfavorável.</span></div>
+  <div class="tablewrap"><table id="rl-ganhei-tcli"></table></div>
+  <div class="section"><h2 id="rl-ganhei-tt">Os casos</h2><span class="note">Um caso por linha, acórdão mais recente primeiro. A busca procura por processo, comarca, UF, projeto e tipo de recurso.</span></div>
+  <div class="controls"><input class="rl-busca" id="rl-ganhei-q" type="search" placeholder="Buscar processo, comarca, UF ou projeto" aria-label="Buscar nos casos" autocomplete="off"></div>
+  <div class="tablewrap"><table id="rl-ganhei-tcasos"></table></div>
+  <div class="rl-cont" id="rl-ganhei-cont"></div>
+  <button type="button" class="rl-mais" id="rl-ganhei-mais">Mostrar mais 200</button>
+  <div class="defs">
+    <h3>Como os números são calculados</h3>
+    <p><b>Quem recorreu</b> sai das tarefas do caso (<code>project.task.tipo_recurso_id</code>). Tarefa de <i>Apelação</i>, <i>Inominado</i> ou <i>Preparo</i> = <b>recurso nosso</b>. Tarefa de <i>Contrarrazões</i> (de Apelação, de Inominado ou de Adesivo) = <b>recurso do autor</b>, porque só se contrarrazoa o recurso da outra parte. Tarefas de Especial, Extraordinário, Embargos e Agravos ficam fora: são de outra instância ou incidentais.</p>
+    <p><b>Conferência com o campo "quem recorreu" do sistema</b> (<code>dossie_recurso</code>): nos casos com tarefa de recurso nosso, o campo diz "parte representada" em __ESCREP__ e "parte contrária" em só __ESCCON__; nos casos com tarefa de contrarrazões, diz "parte contrária" em __AUTCON__ e "parte representada" em __AUTREP__. As tarefas ainda cobrem os casos em que o campo está vazio.</p>
+    <p><b>Casos com as duas tarefas</b> (__AMBOS__ em __ANO__): vale o sentido da sentença. Se ela foi contra nós, o recurso que pode mudar a decisão é o nosso; se foi a nosso favor, é o do autor. __SEM__ casos sem nenhuma dessas tarefas ficam fora das duas abas.</p>
+    <p><b>Classes:</b> favorável = Improcedente ou Extinção; desfavorável = Procedente ou Parcialmente Procedente, pelo <code>tipo_sentenca_id</code> (sentença) e <code>tipo_sentenca_modificada_id</code> (após o acórdão). Parcial → Procedente não conta como perda: é a convenção do MMP para condenação mantida.</p>
+    <p><b>Período:</b> a lista traz todos os acórdãos de __ANO__ registrados até __ASOF__; a taxa usa só __PERIODO__, meses fechados.</p>
+  </div>
+</div>
+<div class="panel" id="panel-perdi" hidden>
+  <header>
+    <div>
+      <h2 class="ptitle">Autor recorreu e perdi</h2>
+      <p class="sub">Casos em que <b>a parte autora</b> recorreu de sentença favorável a nós e o acórdão reverteu a decisão contra nós.</p>
+    </div>
+    <div class="meta">Dados do MMP em <b id="rl-perdi-asof"></b><br>Taxa: <b>__PERIODO__</b> · lista: <b>__ANO__</b></div>
+  </header>
+  <div class="def-strip"><b>Autor recorreu</b> = o caso tem tarefa de <b>Contrarrazões</b> — só se contrarrazoa recurso da outra parte. <b>Perdi</b> = a sentença era favorável (improcedente ou extinção) e, depois do acórdão, ficou desfavorável (procedente ou parcialmente procedente). <b>Agressor/Contumaz</b> = campo do caso (<code>agressor_contumaz</code>) marcado como Sim; use o filtro para ver só esses casos.</div>
+  <div class="controls">
+    <span class="eyebrow">Cliente</span>
+    <div class="chips" id="rl-perdi-chips" role="group" aria-label="Filtrar por cliente"></div>
+  </div>
+  <div class="controls">
+    <span class="eyebrow">Agressor/Contumaz</span>
+    <div class="chips" id="rl-perdi-agr" role="group" aria-label="Filtrar por agressor ou contumaz"></div>
+  </div>
+  <div class="kpis rl-k3" id="rl-perdi-kpis"></div>
+  <div class="section"><h2>Por cliente</h2><span class="note">Casos na lista = __ANO__. Taxa = __PERIODO__, sobre os recursos do autor contra sentença favorável.</span></div>
+  <div class="tablewrap"><table id="rl-perdi-tcli"></table></div>
+  <div class="section"><h2 id="rl-perdi-tt">Os casos</h2><span class="note">Um caso por linha, acórdão mais recente primeiro. A busca procura por processo, comarca, UF, projeto e tipo de recurso.</span></div>
+  <div class="controls"><input class="rl-busca" id="rl-perdi-q" type="search" placeholder="Buscar processo, comarca, UF ou projeto" aria-label="Buscar nos casos" autocomplete="off"></div>
+  <div class="tablewrap"><table id="rl-perdi-tcasos"></table></div>
+  <div class="rl-cont" id="rl-perdi-cont"></div>
+  <button type="button" class="rl-mais" id="rl-perdi-mais">Mostrar mais 200</button>
+  <div class="defs">
+    <h3>Como os números são calculados</h3>
+    <p><b>Quem recorreu</b> sai das tarefas do caso (<code>project.task.tipo_recurso_id</code>). Tarefa de <i>Apelação</i>, <i>Inominado</i> ou <i>Preparo</i> = <b>recurso nosso</b>. Tarefa de <i>Contrarrazões</i> (de Apelação, de Inominado ou de Adesivo) = <b>recurso do autor</b>, porque só se contrarrazoa o recurso da outra parte. Tarefas de Especial, Extraordinário, Embargos e Agravos ficam fora: são de outra instância ou incidentais.</p>
+    <p><b>Conferência com o campo "quem recorreu" do sistema</b> (<code>dossie_recurso</code>): nos casos com tarefa de recurso nosso, o campo diz "parte representada" em __ESCREP__ e "parte contrária" em só __ESCCON__; nos casos com tarefa de contrarrazões, diz "parte contrária" em __AUTCON__ e "parte representada" em __AUTREP__. As tarefas ainda cobrem os casos em que o campo está vazio.</p>
+    <p><b>Casos com as duas tarefas</b> (__AMBOS__ em __ANO__): vale o sentido da sentença. Se ela foi contra nós, o recurso que pode mudar a decisão é o nosso; se foi a nosso favor, é o do autor. __SEM__ casos sem nenhuma dessas tarefas ficam fora das duas abas.</p>
+    <p><b>Classes:</b> favorável = Improcedente ou Extinção; desfavorável = Procedente ou Parcialmente Procedente, pelo <code>tipo_sentenca_id</code> (sentença) e <code>tipo_sentenca_modificada_id</code> (após o acórdão). Parcial → Procedente não conta como perda: é a convenção do MMP para condenação mantida.</p>
+    <p><b>Período:</b> a lista traz todos os acórdãos de __ANO__ registrados até __ASOF__; a taxa usa só __PERIODO__, meses fechados.</p>
+  </div>
+</div>
+<script id="rl-data" type="application/json">__RLDATA__</script>
 <script>
 (function(){
-  const tabs = [['tab-exito','panel-exito'],['tab-reversao','panel-reversao'],['tab-atuacao','panel-atuacao']];
+  const D = JSON.parse(document.getElementById('rl-data').textContent);
+  const fmt = n => n.toLocaleString('pt-BR');
+  const pct = (a,b) => b ? (100*a/b).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%' : '–';
+  const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const achatar = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const dataBR = d => d ? d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4) : '';
+
+  function montar(k, cfg){
+    const S = D[k], $ = id => document.getElementById('rl-'+k+'-'+id);
+    let cli = 'Todos', busca = '', limite = 100, timer = null, agr = 'todos';
+    $('asof').textContent = D.asOf;
+    const chips = $('chips');
+    ['Todos', ...S.por_cliente.map(c => c.cli)].forEach(n => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n;
+      b.addEventListener('click', () => { cli = n; limite = 100; render(); });
+      chips.appendChild(b);
+    });
+    const agrBox = cfg.agressor ? $('agr') : null;
+    if (agrBox) [['todos','Todos'],['s','Sim'],['n','Não']].forEach(([v,l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.dataset.v = v; b.textContent = l;
+      b.addEventListener('click', () => { agr = v; limite = 100; render(); });
+      agrBox.appendChild(b);
+    });
+    // índice de busca: processo, cliente, projeto, UF, comarca, tipos — sem acento e por palavra
+    const idx = S.rows.map(r => ' ' + achatar([r[1], r[2], r[3], r[4], r[5], r[8]].join(' ')) + ' ');
+    $('q').addEventListener('input', ev => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { busca = achatar(ev.target.value); limite = 100; render(); }, 150);
+    });
+    $('mais').addEventListener('click', () => { limite += 200; render(); });
+    const soma = (lista, s) => lista.reduce((t,c) => ({lista:t.lista+(c['lista'+s]||0), num:t.num+(c['num'+s]||0), den:t.den+(c['den'+s]||0)}), {lista:0,num:0,den:0});
+
+    function render(){
+      chips.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.textContent === cli));
+      if (agrBox) agrBox.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === agr));
+      const suf = agr === 'todos' ? '' : '_' + agr;
+      const rotAgr = agr === 'todos' ? '' : (agr === 's' ? ' · com agressor/contumaz' : ' · sem agressor/contumaz');
+      const pc = cli === 'Todos' ? S.por_cliente : S.por_cliente.filter(c => c.cli === cli);
+      const sel = soma(pc, suf);
+      let comparativo = '', naLista = '';
+      if (cfg.agressor) {
+        const ss = soma(pc, '_s'), nn = soma(pc, '_n');
+        comparativo = `<div class="d rl-agr-cmp">Com agressor/contumaz: <b class="rl-mal">${pct(ss.num, ss.den)}</b> <span class="rl-dim">(${fmt(ss.num)} de ${fmt(ss.den)})</span> · sem: <b>${pct(nn.num, nn.den)}</b> <span class="rl-dim">(${fmt(nn.num)} de ${fmt(nn.den)})</span></div>`;
+        if (agr === 'todos') naLista = ` · <b>${fmt(ss.lista)}</b> com agressor/contumaz`;
+      }
+      $('kpis').innerHTML =
+          `<div class="kpi ${cfg.heroCls}"><div class="l">${cfg.heroLabel}${rotAgr} · __PERIODO__</div><div class="v">${pct(sel.num, sel.den)}</div><div class="d"><b>${fmt(sel.num)}</b> de ${fmt(sel.den)} ${cfg.heroTxt}</div>${comparativo}</div>`
+        + `<div class="kpi"><div class="l">Casos na lista · __ANO__</div><div class="v">${fmt(sel.lista)}</div><div class="d">${cli === 'Todos' ? 'todos os clientes' : esc(cli)}${rotAgr}${naLista}</div></div>`
+        + `<div class="kpi"><div class="l">${cfg.baseLabel}</div><div class="v">${fmt(sel.den)}</div><div class="d">__PERIODO__${rotAgr}</div></div>`;
+
+      const tot = soma(S.por_cliente, suf);
+      const extraH = cfg.agressor ? `<th class="sep">${cfg.taxaCol}<br>com agressor/contumaz</th><th>${cfg.taxaCol}<br>sem</th>` : '';
+      const extraC = c => cfg.agressor ? `<td class="sep ${cfg.taxaCls}">${pct(c.num_s, c.den_s)}<span class="n">${fmt(c.den_s)}</span></td><td>${pct(c.num_n, c.den_n)}<span class="n">${fmt(c.den_n)}</span></td>` : '';
+      const totS = soma(S.por_cliente, '_s'), totN = soma(S.por_cliente, '_n');
+      $('tcli').innerHTML = `<tr><th>Cliente</th><th>Casos na lista · __ANO__</th><th class="sep">${cfg.baseCol}</th><th>${cfg.taxaCol}</th>${extraH}</tr>`
+        + S.por_cliente.map(c => `<tr class="${c.cli === cli ? 'mark' : ''}"><td>${esc(c.cli)}</td><td>${fmt(c['lista'+suf])}</td><td class="sep">${fmt(c['den'+suf])}</td><td class="${cfg.taxaCls}">${pct(c['num'+suf], c['den'+suf])}</td>${extraC(c)}</tr>`).join('')
+        + `<tr class="total"><td>Todos</td><td>${fmt(tot.lista)}</td><td class="sep">${fmt(tot.den)}</td><td>${pct(tot.num, tot.den)}</td>`
+        + (cfg.agressor ? `<td class="sep">${pct(totS.num, totS.den)}<span class="n">${fmt(totS.den)}</span></td><td>${pct(totN.num, totN.den)}<span class="n">${fmt(totN.den)}</span></td>` : '') + `</tr>`;
+
+      const b = busca ? ' ' + busca : '';
+      const alvoAgr = agr === 's' ? 'Sim' : (agr === 'n' ? 'Não' : null);
+      const achados = [];
+      for (let i = 0; i < S.rows.length; i++) {
+        const r = S.rows[i];
+        if (cli !== 'Todos' && r[2] !== cli) continue;
+        if (alvoAgr && r[9] !== alvoAgr) continue;
+        if (b && !idx[i].includes(b)) continue;
+        achados.push(r);
+      }
+      const ncol = cfg.agressor ? 9 : 8;
+      $('tt').textContent = cfg.titulo + (cli === 'Todos' ? '' : ' · ' + cli) + rotAgr;
+      $('tcasos').innerHTML = `<tr><th>Acórdão</th><th>Processo</th><th>Cliente</th><th>Projeto</th><th>UF</th><th>Comarca</th><th>Sentença → acórdão</th><th>Tarefa de recurso</th>${cfg.agressor ? '<th>Agressor/<br>contumaz</th>' : ''}</tr>`
+        + (achados.length ? achados.slice(0, limite).map(r =>
+            `<tr><td>${dataBR(r[0])}</td><td class="rl-l">${esc(r[1])}</td><td class="rl-l">${esc(r[2])}</td><td class="rl-l">${esc(r[3])}</td><td>${esc(r[4])}</td><td class="rl-l">${esc(r[5])}</td>`
+          + `<td class="rl-l rl-trans"><span class="de">${esc(r[6])}</span> → <span class="${cfg.resCls}">${esc(r[7])}</span></td><td class="rl-l">${esc(r[8])}</td>`
+          + (cfg.agressor ? `<td class="${r[9] === 'Sim' ? 'rl-mal' : 'rl-dim'}">${esc(r[9])}</td>` : '') + `</tr>`).join('')
+          : `<tr><td class="rl-l" colspan="${ncol}">Nenhum caso com esse filtro.${busca ? ' Confira a grafia ou apague parte da busca.' : ''}</td></tr>`);
+      const mostrados = Math.min(limite, achados.length);
+      $('cont').textContent = achados.length ? `Mostrando ${fmt(mostrados)} de ${fmt(achados.length)} casos.` : '';
+      $('mais').hidden = mostrados >= achados.length;
+    }
+    render();
+  }
+
+  montar('ganhei', {titulo:'Recorri e ganhei', heroLabel:'Recorri e ganhei', heroCls:'hero',
+    heroTxt:'recursos nossos contra sentença desfavorável mudaram a decisão',
+    baseLabel:'Recursos nossos contra sentença desfavorável', baseCol:'Recursos nossos · __PERIODO_CURTO__', taxaCol:'Ganhei · __PERIODO_CURTO__',
+    taxaCls:'bom', resCls:'rl-ok', agressor:false});
+  montar('perdi', {titulo:'Autor recorreu e perdi', heroLabel:'Autor recorreu e perdi', heroCls:'rl-ruim',
+    heroTxt:'recursos do autor contra sentença favorável reverteram a decisão',
+    baseLabel:'Recursos do autor contra sentença favorável', baseCol:'Recursos do autor · __PERIODO_CURTO__', taxaCol:'Perdi · __PERIODO_CURTO__',
+    taxaCls:'ruim', resCls:'rl-mal', agressor:true});
+})();
+</script>
+<script>
+(function(){
+  const tabs = [['tab-exito','panel-exito'],['tab-reversao','panel-reversao'],['tab-atuacao','panel-atuacao'],['tab-ganhei','panel-ganhei'],['tab-perdi','panel-perdi']];
   function show(id){ tabs.forEach(([t,p])=>{ const on = t===id; document.getElementById(t).setAttribute('aria-selected', on); document.getElementById(p).hidden = !on; }); try { localStorage.setItem('painel-tab', id); } catch(e){} }
   tabs.forEach(([t])=>document.getElementById(t).addEventListener('click', ()=>show(t)));
   let saved = null; try { saved = localStorage.getItem('painel-tab'); } catch(e){}

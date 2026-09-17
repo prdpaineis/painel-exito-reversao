@@ -29,6 +29,7 @@ from .config import (
     CLIENTES_ATUACAO,
     MIN_ACORDAOS_PROJETO_ATUACAO,
     MIN_SENTENCAS_PROJETO_ATUACAO,
+    NOME_UF,
     OUTROS_PROJETOS,
     RECURSO_NOSSO,
     SANTANDER_GROUP_ID,
@@ -285,9 +286,6 @@ def montar(sentencas: Iterable[LinhaSentenca], acordaos: Iterable[LinhaAcordao],
         "clienteComProjeto": CLIENTE_COM_PROJETO,
         "dims": dims,
     }
-
-
-NOME_UF = {sigla: nome for nome, sigla in SIGLA_UF.items()}
 
 
 # --------------------------------------------------------------------------

@@ -6,7 +6,7 @@ Uso típico (mês fechado em agosto):
 
     python main.py --as-of 09/09/2026 --last-full-month 8
 
-Saída: out/painel.html (mais out/sentencas.json e out/reversao.json).
+Saída: out/painel.html (mais sentencas.json, reversao.json, atuacao.json e recursos.json).
 Credenciais vêm do ambiente ou de um .env local — ver .env.example.
 """
 from __future__ import annotations
@@ -18,15 +18,15 @@ from datetime import date
 from pathlib import Path
 
 from painel import atuacao as mod_atuacao
+from painel import recursos as mod_recursos
 from painel import reversao as mod_reversao
 from painel import sentencas as mod_sentencas
 from painel.build import gravar, montar_pagina
 from painel.config import load_config
 from painel.odoo import Odoo, OdooError
+from painel.util import MESES_CURTOS
 
 RAIZ = Path(__file__).resolve().parent
-MESES_CURTOS = {1: "jan", 2: "fev", 3: "mar", 4: "abr", 5: "mai", 6: "jun",
-                7: "jul", 8: "ago", 9: "set", 10: "out", 11: "nov", 12: "dez"}
 
 
 def _hoje_br() -> str:
@@ -89,36 +89,43 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(f"AVISO: {args.cobertura} não encontrado — a aba de reversão sai sem o bloco de auditoria.")
 
+    fim_fechado = (f"{ano}-{args.last_full_month + 1:02d}-01"
+                   if args.last_full_month < 12 else f"{ano + 1}-01-01")
+
     try:
         print("Buscando sentenças...", flush=True)
         linhas_s = mod_sentencas.buscar(odoo, inicio, fim_busca)
-        dados_s = mod_sentencas.montar(linhas_s, args.as_of, args.last_full_month, anos=anos)
+        dados_s = mod_sentencas.montar(linhas_s, args.as_of, args.last_full_month, ano)
 
         print("Buscando acórdãos...", flush=True)
         linhas_r = mod_reversao.buscar(odoo, inicio, fim_busca)
-        dados_r = mod_reversao.montar(linhas_r, args.as_of, args.last_full_month,
-                                      cobertura=cobertura, anos=anos)
+        dados_r = mod_reversao.montar(linhas_r, args.as_of, args.last_full_month, ano,
+                                      cobertura=cobertura)
 
         print("Buscando o recorte por UF, comarca e tipo de ação...", flush=True)
-        fim_fechado = (f"{ano}-{args.last_full_month + 1:02d}-01"
-                       if args.last_full_month < 12 else f"{ano + 1}-01-01")
         periodo = f"jan–{MESES_CURTOS[args.last_full_month]}/{ano}"
         linhas_as, linhas_aa = mod_atuacao.buscar(odoo, f"{ano}-01-01", fim_fechado)
         dados_a = mod_atuacao.montar(linhas_as, linhas_aa, args.as_of, periodo)
+
+        print("Buscando quem recorreu (Recorri e ganhei / Autor recorreu e perdi)...", flush=True)
+        linhas_rl = mod_recursos.buscar(odoo, f"{ano}-01-01", fim_busca)
+        dados_rl = mod_recursos.montar(linhas_rl, args.as_of, fim_fechado)
     except OdooError as exc:
         print(f"ERRO na consulta: {exc}", file=sys.stderr)
         return 1
 
-    print(f"  {len(linhas_s)} grupos de sentenças · {len(linhas_r)} grupos de acórdãos"
-          f" · {len(linhas_as) + len(linhas_aa)} grupos por UF/comarca/tipo de ação")
+    print(f"  {len(linhas_s)} sentenças · {len(linhas_r)} acórdãos"
+          f" · {len(linhas_as) + len(linhas_aa)} grupos por UF/comarca/tipo de ação"
+          f" · {len(linhas_rl)} acórdãos p/ recursos")
 
     ok = True
     if not args.no_check:
         print("Conferindo contra o servidor:")
         for descricao, no_json, no_servidor in (
-            mod_sentencas.conferir(odoo, dados_s, ano)
-            + mod_reversao.conferir(odoo, dados_r, ano)
+            mod_sentencas.conferir(odoo, linhas_s, inicio, fim_busca)
+            + mod_reversao.conferir(odoo, linhas_r, inicio, fim_busca)
             + mod_atuacao.conferir(odoo, dados_a, f"{ano}-01-01", fim_fechado)
+            + mod_recursos.conferir(odoo, linhas_rl, f"{ano}-01-01", fim_busca)
         ):
             bate = no_json == no_servidor
             ok = ok and bate
@@ -132,9 +139,11 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(dados_r, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (args.out / "atuacao.json").write_text(
         json.dumps(dados_a, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (args.out / "recursos.json").write_text(
+        json.dumps(dados_rl, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     pagina = montar_pagina(
-        args.template.read_text(encoding="utf-8"), dados_s, dados_r, dados_a, args.as_of
+        args.template.read_text(encoding="utf-8"), dados_s, dados_r, dados_a, dados_rl, args.as_of
     )
     destino = gravar(args.out / "painel.html", pagina)
     print(f"Página gerada: {destino} ({destino.stat().st_size // 1024} KB)")

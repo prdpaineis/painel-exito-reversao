@@ -79,6 +79,29 @@ class Odoo:
             context=dict(BASE_CONTEXT),
         )
 
+    def search_read(
+        self, model: str, domain: Iterable[Any], fields: Sequence[str],
+        order: str = "id", page_size: int = 1000,
+    ) -> list[dict]:
+        """Lê registro a registro, paginado.
+
+        Usado onde `read_group` não chega: classificação por caso (carteira ativa/
+        saiu, tarefas de recurso relacionadas) precisa do registro, não do agregado.
+        """
+        registros: list[dict] = []
+        offset = 0
+        while True:
+            lote = self.execute_kw(
+                model, "search_read", [list(domain)],
+                fields=list(fields), limit=page_size, offset=offset, order=order,
+                context=dict(BASE_CONTEXT),
+            )
+            registros += lote
+            offset += len(lote)
+            if len(lote) < page_size:
+                break
+        return registros
+
     def whoami(self) -> str:
         rec = self.execute_kw("res.users", "read", [[self.uid]], fields=["name", "login"])
         return f"{rec[0]['name']} ({rec[0]['login']}, uid {self.uid})"

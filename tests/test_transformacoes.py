@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from painel import reversao, sentencas  # noqa: E402
+from painel import recursos, reversao, sentencas  # noqa: E402
 from painel.util import parse_ano_mes  # noqa: E402
 
 
@@ -32,55 +32,115 @@ def test_mes_pelo_dominio_quando_rotulo_e_estranho():
 
 
 # --------------------------------------------------------------------------
-# Sentenças
+# Sentenças (v2 — extração linha a linha, carteira dinâmica)
 # --------------------------------------------------------------------------
 
-def _linha_s(nome, mes, tipo, n, escopo="cliente", ano=2026):
-    return sentencas.Linha(escopo=escopo, nome=nome, ano=ano, mes=mes, tipo_id=tipo, quantidade=n)
+def _reg_s(cliente, mes, tipo, ano=2026, projeto="", agressor=False, contumaz=False,
+          uf="SP", comarca="Capital"):
+    return sentencas.Registro(cliente=cliente, projeto=projeto, ano=ano, mes=mes, tipo_id=tipo,
+                              agressor=agressor, contumaz=contumaz, uf_sigla=uf, comarca=comarca)
 
 
-def test_sentencas_soma_extincoes_no_mesmo_slot():
-    dados = sentencas.montar([
-        _linha_s("Santander", 1, "1", 10),   # improcedente
-        _linha_s("Santander", 1, "3", 4),    # extinção sem mérito
-        _linha_s("Santander", 1, "7", 1),    # extinção da execução -> mesmo slot
-        _linha_s("Santander", 1, "2", 5),    # procedente
-    ], as_of="01/01/2027", ultimo_mes_fechado=1)
+def _ativa(cliente="Santander", mes=6, n=5):
+    """Sentenças de recheio num mês fora do que o teste examina, só para o cliente
+    passar do piso da carteira (janela jun-ago/2026 no `ultimo_mes_fechado=8` usado
+    nos testes) e ganhar chip próprio em vez de cair em "Outros"."""
+    return [_reg_s(cliente, mes, "1") for _ in range(n)]
+
+
+def test_sentencas_cliente_com_volume_na_janela_vira_ativo():
+    # 5 sentenças em jun-ago/2026 (mês fechado = 8): entra na carteira com chip próprio
+    linhas = [_reg_s("Santander", m, "1") for m in (6, 6, 7, 8, 8)]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    nomes = [c["name"] for c in dados["clients"]]
+    assert "Santander" in nomes and "Outros" not in nomes
+
+
+def test_sentencas_cliente_pouco_volume_vira_outros():
+    linhas = [_reg_s("Banco Pequeno", 8, "1")]   # só 1 na janela: 1-4 -> "Outros"
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    outros = next(c for c in dados["clients"] if c["name"] == "Outros")
+    assert outros["members"] == ["Banco Pequeno"]
+    assert outros["y"]["2026"][7][0] == 1
+
+
+def test_sentencas_cliente_sem_movimento_na_janela_saiu_da_carteira():
+    # sentença só em janeiro: 0 na janela jun-ago -> "saiu", fora de "clients"
+    linhas = [_reg_s("Banco Que Saiu", 1, "1")]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    assert dados["clients"] == []
+    assert [s["name"] for s in dados["sairam"]] == ["Banco Que Saiu"]
+    assert dados["sairam"][0]["ultimo"] == "jan/26"
+
+
+def test_sentencas_cliente_novo_no_ano_e_sinalizado():
+    linhas = [_reg_s("Santander", m, "1") for m in (6, 6, 7, 8, 8)]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    assert [n["name"] for n in dados["novos"]] == ["Santander"]
+    assert dados["novos"][0]["desde"] == "jun/26"
+
+
+def test_sentencas_soma_extincoes_no_mesmo_slot_e_marca_agressor():
+    linhas = _ativa() + [_reg_s("Santander", 8, "1"),                          # improcedente
+              _reg_s("Santander", 8, "3", agressor=True),           # extinção sem mérito, c/ agressor
+              _reg_s("Santander", 8, "7", contumaz=True),           # extinção da execução, c/ contumaz
+              _reg_s("Santander", 8, "2")]                          # procedente
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
     santander = next(c for c in dados["clients"] if c["name"] == "Santander")
-    janeiro = santander["y"]["2026"][0]
-    assert janeiro[0] == 10          # improcedentes
-    assert janeiro[1] == 5           # extinções somadas
-    assert janeiro[3] == 5           # procedentes
+    agosto = santander["y"]["2026"][7]
+    assert agosto[0] == 1            # improcedentes
+    assert agosto[1] == 2            # extinções (mérito + execução no mesmo slot)
+    assert agosto[3] == 1            # procedentes
+    assert agosto[6] == 1            # extinções c/ advogado agressor
+    assert agosto[7] == 1            # extinções c/ agressor/contumaz
 
 
 def test_sentencas_tipo_desconhecido_vai_para_sem_tipo():
-    dados = sentencas.montar([_linha_s("Santander", 2, "", 7)],
-                             as_of="01/01/2027", ultimo_mes_fechado=2)
+    linhas = _ativa() + [_reg_s("Santander", 8, "")]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
     santander = next(c for c in dados["clients"] if c["name"] == "Santander")
-    assert santander["y"]["2026"][1][sentencas.SLOT_SEM_TIPO] == 7
+    assert santander["y"]["2026"][7][sentencas.SLOT_SEM_TIPO] == 1
 
 
-def test_sentencas_cliente_fora_da_lista_cai_em_outros():
-    dados = sentencas.montar([
-        _linha_s("Santander", 1, "1", 3),
-        _linha_s("Banco Que Ninguém Conhece", 1, "1", 2),
-    ], as_of="01/01/2027", ultimo_mes_fechado=1)
-    outros = next(c for c in dados["clients"] if c["name"] == "Outros")
-    assert outros["y"]["2026"][0][0] == 2
-    assert outros["members"] == ["Banco Que Ninguém Conhece"]
-
-
-def test_sentencas_projeto_pequeno_vira_outros_projetos():
-    linhas = [_linha_s("Santander - Consignado", 1, "1", 100, escopo="projeto"),
-              _linha_s("Santander - Coisa Rara", 1, "1", 3, escopo="projeto")]
-    dados = sentencas.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1)
+def test_sentencas_projeto_fora_do_top_vira_outros_projetos():
+    # só os TOP_PROJETOS_SENTENCAS (13) projetos com mais volume ganham linha própria
+    linhas = [_reg_s("Santander", 8, "1", projeto=f"Projeto {i}") for i in range(13) for _ in range(i + 2)]
+    linhas += [_reg_s("Santander", 8, "1", projeto="Coisa Rara")]      # o menor volume de todos
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
     nomes = [p["name"] for p in dados["projects"]]
-    assert nomes == ["Consignado", "Outros projetos"]  # prefixo "Santander - " removido
-    assert dados["projects"][-1]["y"]["2026"][0][0] == 3
+    assert nomes[-1] == "Outros projetos"
+    assert dados["projects"][-1]["members"] == ["Coisa Rara"]
+    assert len(nomes) == sentencas.TOP_PROJETOS_SENTENCAS + 1
+
+
+def test_sentencas_geo_agrupa_por_cliente_uf_e_comarca():
+    linhas = _ativa() + [_reg_s("Santander", 3, "1", uf="PE", comarca="Recife"),
+              _reg_s("Santander", 3, "1", uf="PE", comarca="Recife"),
+              _reg_s("Santander", 3, "2", uf="SP", comarca="Capital")]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    geo = dados["geo"]
+    assert geo["ufs"]["PE"] == "Pernambuco"
+    linha_recife = next(r for r in geo["rows"] if geo["com"][r[1]][0] == "Recife")
+    assert linha_recife[2] == 2      # 2 improcedentes em Recife/PE
+
+
+def test_sentencas_sentenca_sem_tipo_fica_fora_do_geo():
+    linhas = _ativa(mes=6) + [_reg_s("Santander", 3, "", uf="PE", comarca="Recife")]
+    dados = sentencas.montar(linhas, as_of="01/09/2026", ultimo_mes_fechado=8, ano=2026)
+    # a sentença "sem tipo" não entra no geo; só sobram as de recheio, em SP/Capital
+    assert all(dados["geo"]["com"][r[1]] != ["Recife", "PE"] for r in dados["geo"]["rows"])
+
+
+def test_sentencas_conferir_compara_total_extraido_com_o_servidor():
+    class _Conta:
+        def search_count(self, model, domain):
+            return 42
+    checagens = sentencas.conferir(_Conta(), [_reg_s("Santander", 8, "1")], "2026-01-01", "2026-10-01")
+    assert checagens == [("sentenças extraídas (linha a linha)", 1, 42)]
 
 
 # --------------------------------------------------------------------------
-# Reversão recursal
+# Reversão recursal (v2 — extração linha a linha, vetor de 13 posições)
 # --------------------------------------------------------------------------
 
 def test_classificacao_das_transicoes():
@@ -93,41 +153,164 @@ def test_classificacao_das_transicoes():
     assert reversao.SLOTS[s("", "1")] == "X"     # sem sentença original registrada
 
 
-def _linha_r(nome, mes, recurso, tipo, mod, n, escopo="cliente", ano=2026):
-    return reversao.Linha(escopo=escopo, nome=nome, ano=ano, mes=mes, recurso=recurso,
-                          tipo_id=tipo, modificada_id=mod, quantidade=n)
+def _reg_r(cliente, mes, recurso, tipo, mod, ano=2026, projeto="", agressor=False, contumaz=False):
+    return reversao.Registro(cliente=cliente, projeto=projeto, ano=ano, mes=mes, recurso=recurso,
+                             tipo_id=tipo, modificada_id=mod, agressor=agressor, contumaz=contumaz)
 
 
 def test_reversao_separa_recurso_nosso_do_adversario():
     linhas = [
-        _linha_r("Santander", 1, "representada", "2", "1", 3),   # nosso, reverteu a favor
-        _linha_r("Santander", 1, "ambos", "2", "2", 7),          # nosso, manteve condenação
-        _linha_r("Santander", 1, "contraria", "1", "2", 5),      # do adversário, perdemos
-        _linha_r("Santander", 1, "", "1", "1", 11),              # sem registro de quem recorreu
+        _reg_r("Santander", 1, "representada", "2", "1"),   # nosso, reverteu a favor (-> improc.)
+        _reg_r("Santander", 1, "ambos", "2", "2"),           # nosso, manteve condenação
+        _reg_r("Santander", 1, "ambos", "2", "2"),
+        _reg_r("Santander", 1, "ambos", "2", "2"),
+        _reg_r("Santander", 1, "ambos", "2", "2"),
+        _reg_r("Santander", 1, "ambos", "2", "2"),
+        _reg_r("Santander", 1, "ambos", "2", "2"),
+        _reg_r("Santander", 1, "contraria", "1", "2"),       # do adversário, perdemos
+        _reg_r("Santander", 1, "", "1", "1"),                # sem registro de quem recorreu
     ]
-    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1)
+    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026)
     santander = next(c for c in dados["clients"] if c["name"] == "Santander")
     nos = santander["nos"]["2026"][0]
     tot = santander["tot"]["2026"][0]
 
-    assert nos[2] == 3 and nos[3] == 7      # só os recursos nossos
+    assert nos[2] == 1 and nos[3] == 6      # só os recursos nossos: DF e DD
     assert nos[1] == 0 and nos[0] == 0      # o resto não contamina "nos"
-    assert tot[1] == 5 and tot[0] == 11     # mas continua em "tot"
-    # reversão recursal = DF / (DF + DD)
-    assert nos[2] / (nos[2] + nos[3]) == 0.3
+    assert tot[1] == 1 and tot[0] == 1      # mas continua em "tot"
+    assert nos[5] == 1                      # DF -> improcedência
+    assert nos[2] / (nos[2] + nos[3]) == 1 / 7
+
+
+def test_reversao_separa_improcedencia_de_extincao_e_marca_agressor():
+    linhas = [_reg_r("Santander", 1, "representada", "2", "1"),                       # DF -> improc.
+              _reg_r("Santander", 1, "representada", "2", "3", agressor=True),        # DF -> ext. (agr.)
+              _reg_r("Santander", 1, "representada", "1", "1", contumaz=True)]        # FF, sentença era ext.? (não, "1"=improc)
+    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026)
+    santander = next(c for c in dados["clients"] if c["name"] == "Santander")
+    nos = santander["nos"]["2026"][0]
+    assert nos[5] == 1 and nos[6] == 1      # DF_improc, DF_ext
+    assert nos[9] == 1                      # DF_ext_adv_agressor
+    assert nos[0] == 1 and nos[7] == 1      # FF, e a sentença mantida era improcedência
+
+
+def test_reversao_ff_com_extincao_mantida_conta_em_nota_ext():
+    linhas = [_reg_r("Santander", 1, "representada", "3", "1"),   # FF: sentença era extinção, resultado gravado é improc.
+              _reg_r("Santander", 1, "representada", "3", "3")]   # FF: sentença e resultado gravados como extinção
+    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026)
+    assert dados["nota_ext"] == {"ff_ext": 2, "ff_ext_como_improc": 1}
+
+
+def test_reversao_cliente_fora_da_carteira_padrao_cai_em_outros():
+    linhas = [_reg_r("Banco Que Ninguém Conhece", 1, "representada", "2", "1")]
+    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026)
+    outros = next(c for c in dados["clients"] if c["name"] == "Outros")
+    assert outros["members"] == ["Banco Que Ninguém Conhece"]
+    assert outros["tot"]["2026"][0][2] == 1
 
 
 def test_reversao_repassa_cobertura():
     cobertura = [{"ano": "2026", "com": 10, "sem": 2}]
-    dados = reversao.montar([], as_of="01/01/2027", ultimo_mes_fechado=1, cobertura=cobertura)
+    dados = reversao.montar([], as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026, cobertura=cobertura)
     assert dados["cobertura"] == cobertura
 
 
 def test_reversao_ignora_anos_fora_da_janela():
-    linhas = [_linha_r("Santander", 1, "representada", "2", "1", 9, ano=2019)]
-    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1)
+    linhas = [_reg_r("Santander", 1, "representada", "2", "1", ano=2019)]
+    dados = reversao.montar(linhas, as_of="01/01/2027", ultimo_mes_fechado=1, ano=2026)
     total = sum(sum(m) for c in dados["clients"] for m in c["tot"]["2026"])
     assert total == 0
+
+
+def test_reversao_conferir_compara_total_extraido_com_o_servidor():
+    class _Conta:
+        def search_count(self, model, domain):
+            return 7
+    checagens = reversao.conferir(_Conta(), [_reg_r("Santander", 1, "representada", "2", "1")],
+                                  "2026-01-01", "2026-10-01")
+    assert checagens == [("acórdãos extraídos (linha a linha)", 1, 7)]
+
+
+# --------------------------------------------------------------------------
+# "Recorri e ganhei" / "Autor recorreu e perdi"
+# --------------------------------------------------------------------------
+
+def _reg_rl(cliente, data, tipos, tr, agressor_contumaz=None, processo="0001", uf="SP", comarca="Capital",
+           campo="vazio"):
+    return recursos.Registro(processo=processo, data=data, cliente=cliente, projeto="", uf=uf,
+                             comarca=comarca, sentenca="", resultado="", tr=tr,
+                             quem=recursos._quem(set(tipos)), campo=campo, tipos=tuple(sorted(tipos)),
+                             agressor_contumaz=agressor_contumaz)
+
+
+def test_recursos_quem_recorreu_por_tarefa():
+    assert recursos._quem({"Apelação"}) == "escritorio"
+    assert recursos._quem({"Contrarrazões - Apelação"}) == "autor"
+    assert recursos._quem({"Apelação", "Contrarrazões - Apelação"}) == "ambos"
+    assert recursos._quem(set()) == "sem_tarefa"
+    assert recursos._quem({"Embargos de Declaração"}) == "sem_tarefa"   # fora das duas listas
+
+
+def test_recursos_ganhei_conta_recurso_nosso_que_reverteu_a_favor():
+    linhas = [
+        _reg_rl("Santander", "2026-03-01", {"Apelação"}, "DF"),          # ganhei
+        _reg_rl("Santander", "2026-03-01", {"Apelação"}, "DD"),          # recorremos, mantida
+        _reg_rl("Santander", "2026-03-01", {"Contrarrazões - Apelação"}, "DF"),  # não é nosso recurso
+    ]
+    dados = recursos.montar(linhas, as_of="01/09/2026", data_fim_fechado="2026-09-01")
+    santander = next(c for c in dados["ganhei"]["por_cliente"] if c["cli"] == "Santander")
+    assert santander["lista"] == 1 and santander["num"] == 1 and santander["den"] == 2
+    assert len(dados["ganhei"]["rows"]) == 1
+
+
+def test_recursos_perdi_separa_agressor_contumaz():
+    linhas = [
+        _reg_rl("Gol", "2026-03-01", {"Contrarrazões - Apelação"}, "FD", agressor_contumaz="s"),
+        _reg_rl("Gol", "2026-03-01", {"Contrarrazões - Apelação"}, "FF", agressor_contumaz="s"),
+        _reg_rl("Gol", "2026-03-01", {"Contrarrazões - Apelação"}, "FF", agressor_contumaz="n"),
+    ]
+    dados = recursos.montar(linhas, as_of="01/09/2026", data_fim_fechado="2026-09-01")
+    gol = next(c for c in dados["perdi"]["por_cliente"] if c["cli"] == "Gol")
+    assert gol["num"] == 1 and gol["den"] == 3
+    assert gol["num_s"] == 1 and gol["den_s"] == 2      # com agressor/contumaz
+    assert gol["num_n"] == 0 and gol["den_n"] == 1      # sem
+
+
+def test_recursos_taxa_so_conta_meses_fechados():
+    linhas = [_reg_rl("Santander", "2026-08-15", {"Apelação"}, "DD"),    # agosto: mês fechado, entra
+              _reg_rl("Santander", "2026-09-15", {"Apelação"}, "DD")]   # setembro: fora do fechado
+    dados = recursos.montar(linhas, as_of="01/09/2026", data_fim_fechado="2026-09-01")
+    santander = next(c for c in dados["ganhei"]["por_cliente"] if c["cli"] == "Santander")
+    assert santander["den"] == 1
+
+
+def test_recursos_cliente_fora_da_carteira_padrao_cai_em_outros():
+    linhas = [_reg_rl("Banco Ignoto", "2026-03-01", {"Apelação"}, "DF")]
+    dados = recursos.montar(linhas, as_of="01/09/2026", data_fim_fechado="2026-09-01")
+    assert dados["ganhei"]["rows"][0][2] == "Outros"
+
+
+def test_recursos_conferencia_cruza_quem_com_o_campo_antigo():
+    linhas = [
+        _reg_rl("Santander", "2026-03-01", {"Apelação"}, "DF", campo="representada"),
+        _reg_rl("Santander", "2026-03-01", {"Apelação"}, "DD", campo="contraria"),
+        _reg_rl("Gol", "2026-03-01", {"Apelação", "Contrarrazões - Apelação"}, "DD"),  # ambos
+        _reg_rl("Gol", "2026-03-01", set(), "XX"),                                     # sem_tarefa
+    ]
+    dados = recursos.montar(linhas, as_of="01/09/2026", data_fim_fechado="2026-09-01")
+    conf = dados["conferencia"]
+    assert conf["ambos"] == 1 and conf["semTarefa"] == 1
+    assert conf["escRepresentada"] == 1 and conf["escContraria"] == 1
+    assert conf["autContraria"] == 0 and conf["autRepresentada"] == 0
+
+
+def test_recursos_conferir_compara_total_extraido_com_o_servidor():
+    class _Conta:
+        def search_count(self, model, domain):
+            return 3
+    checagens = recursos.conferir(_Conta(), [_reg_rl("Santander", "2026-03-01", {"Apelação"}, "DF")],
+                                  "2026-01-01", "2026-10-01")
+    assert checagens == [("acórdãos extraídos p/ recursos (linha a linha)", 1, 3)]
 
 
 # --------------------------------------------------------------------------

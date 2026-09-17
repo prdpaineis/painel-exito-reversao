@@ -5,6 +5,11 @@ from __future__ import annotations
 import re
 from typing import Any
 
+MESES_CURTOS = {1: "jan", 2: "fev", 3: "mar", 4: "abr", 5: "mai", 6: "jun",
+                7: "jul", 8: "ago", 9: "set", 10: "out", 11: "nov", 12: "dez"}
+MESES_LONGOS = {1: "janeiro", 2: "fevereiro", 3: "março", 4: "abril", 5: "maio", 6: "junho",
+                7: "julho", 8: "agosto", 9: "setembro", 10: "outubro", 11: "novembro", 12: "dezembro"}
+
 MESES_EN = {
     "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
     "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
@@ -76,3 +81,31 @@ def soma_em(destino: list[list[int]], origem: list[list[int]]) -> None:
 def com_chave_de_ano_string(por_ano: dict[int, list[list[int]]]) -> dict[str, list[list[int]]]:
     """O JSON do painel usa o ano como string ("2025"/"2026")."""
     return {str(ano): valores for ano, valores in sorted(por_ano.items())}
+
+
+def chave_ano_mes(ano: int, mes: int) -> str:
+    """"2026-08", para comparar e ordenar períodos como texto."""
+    return f"{ano:04d}-{mes:02d}"
+
+
+def ultimos_meses_fechados(ano: int, ultimo_mes_fechado: int, quantidade: int) -> set[str]:
+    """As `quantidade` chaves ano-mês que terminam em `ultimo_mes_fechado`, andando
+    para trás mês a mês (cruza para dezembro do ano anterior se preciso).
+
+    Usado para medir volume recente sem precisar atualizar uma data à mão a cada
+    virada de mês — só o `--last-full-month` muda.
+    """
+    chaves = set()
+    a, m = ano, ultimo_mes_fechado
+    for _ in range(quantidade):
+        chaves.add(chave_ano_mes(a, m))
+        m -= 1
+        if m == 0:
+            m, a = 12, a - 1
+    return chaves
+
+
+def mes_curto(chave_ano_mes_str: str) -> str:
+    """"2026-08" -> "ago/26"."""
+    ano, mes = chave_ano_mes_str.split("-")
+    return f"{MESES_CURTOS[int(mes)]}/{ano[2:]}"
